@@ -238,6 +238,13 @@ body {
   --background: 222 47% 2%;
 }
 
+/* Clerk Branding overrides */
+.cl-userButtonPopoverFooter,
+.cl-internal-b3alnn,
+.cl-internal-1809771 {
+  display: none !important;
+}
+
 @layer base {
   * {
     @apply border-border;

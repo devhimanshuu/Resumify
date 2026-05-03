@@ -46,6 +46,8 @@ export const documentRelations = relations(documentTable, ({ one, many }) => {
 
 export const createDocumentTableSchema = createInsertSchema(documentTable, {
   title: (schema) => schema.title.min(1),
+  status: (schema) => schema.status.optional(),
+  summary: (schema) => schema.summary.optional(),
   themeColor: (schema) => schema.themeColor.optional(),
   thumbnail: (schema) => schema.thumbnail.optional(),
   currentPosition: (schema) => schema.currentPosition.optional(),

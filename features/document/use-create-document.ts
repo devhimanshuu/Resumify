@@ -13,6 +13,9 @@ const useCreateDocument = () => {
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (json) => {
       const response = await api.document.create.$post({ json });
+      if (!response.ok) {
+        throw new Error("Failed to create document");
+      }
       return await response.json();
     },
     onSuccess: (response) => {

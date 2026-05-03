@@ -30,8 +30,8 @@ const documentRoute = new Hono()
         const user = c.get("user");
         const { title } = c.req.valid("json") as DocumentSchema;
         const userId = user.id;
-        const authorName = `${user.given_name} ${user?.family_name}`;
-        const authorEmail = user.email as string;
+        const authorName = `${user.given_name || ""} ${user?.family_name || ""}`.trim() || "Anonymous";
+        const authorEmail = user.email || "no-email@resumify.com";
         const documentId = generateDocUUID();
 
         const newDoc = {
