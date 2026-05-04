@@ -14,7 +14,7 @@ import {
 } from "react-simple-wysiwyg";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-import { Loader, Sparkles } from "lucide-react";
+import { Loader, Sparkles, TrendingUp, Briefcase, Shrink } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { AIChatSession } from "@/lib/groq-model";
 
@@ -27,6 +27,12 @@ const PROMPT = `Given the job title "{jobTitle}",
      only the bullet points inside an unordered
      list.`;
 
+const REWRITE_PROMPTS = {
+  metric: `Rewrite the following resume bullet point to make it metric-driven. Add placeholders like [X]% or $Y for numbers/percentages if none exist. Make it sound highly professional and impactful. Only return the rewritten text, no quotes or explanations:\n\n`,
+  executive: `Rewrite the following resume bullet point using executive power verbs (e.g., orchestrated, spearheaded, drove). Make it sound highly professional and impactful. Only return the rewritten text, no quotes or explanations:\n\n`,
+  shorten: `Rewrite the following resume bullet point to be extremely concise for ATS brevity. Remove fluff and keep the core impact. Only return the rewritten text, no quotes or explanations:\n\n`,
+};
+
 const RichTextEditor = (props: {
   jobTitle: string | null;
   initialValue: string;
@@ -36,6 +42,12 @@ const RichTextEditor = (props: {
 
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState(initialValue || "");
+
+  // Inline AI State
+  const [selectionRange, setSelectionRange] = useState<Range | null>(null);
+  const [selectionRect, setSelectionRect] = useState<DOMRect | null>(null);
+  const [selectedText, setSelectedText] = useState("");
+  const [loadingRewrite, setLoadingRewrite] = useState(false);
 
   const GenerateSummaryFromAI = async () => {
     try {
@@ -65,6 +77,52 @@ const RichTextEditor = (props: {
     }
   };
 
+  const handleMouseUp = () => {
+    const selection = window.getSelection();
+    if (selection && selection.toString().trim().length > 0) {
+      const range = selection.getRangeAt(0);
+      setSelectionRange(range);
+      setSelectionRect(range.getBoundingClientRect());
+      setSelectedText(selection.toString().trim());
+    } else {
+      setSelectionRect(null);
+      setSelectionRange(null);
+      setSelectedText("");
+    }
+  };
+
+  const handleRewrite = async (type: "metric" | "executive" | "shorten") => {
+    if (!selectedText || !selectionRange) return;
+    setLoadingRewrite(true);
+    try {
+      const prompt = REWRITE_PROMPTS[type] + selectedText;
+      const result = await AIChatSession.sendMessage(prompt);
+      let newText = await result.response.text();
+      newText = newText.replace(/^["']|["']$/g, "").trim();
+
+      // Ensure the correct range is selected
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(selectionRange);
+
+      // Replace the text
+      document.execCommand("insertText", false, newText);
+
+      // Hide the menu
+      setSelectionRect(null);
+      setSelectionRange(null);
+      setSelectedText("");
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Failed to rewrite text",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingRewrite(false);
+    }
+  };
+
   return (
     <div>
       <div
@@ -87,34 +145,90 @@ const RichTextEditor = (props: {
         </Button>
       </div>
 
-      <EditorProvider>
-        <Editor
-          value={value}
-          containerProps={{
-            style: {
-              resize: "vertical",
-              lineHeight: 1.2,
-              fontSize: "13.5px",
-            },
-          }}
-          onChange={(e) => {
-            setValue(e.target.value);
-            onEditorChange(e.target.value);
-          }}
-        >
-          <Toolbar>
-            <BtnBold />
-            <BtnItalic />
-            <BtnUnderline />
-            <BtnStrikeThrough />
-            <Separator />
-            <BtnNumberedList />
-            <BtnBulletList />
-            <Separator />
-            <BtnLink />
-          </Toolbar>
-        </Editor>
-      </EditorProvider>
+      <div onMouseUp={handleMouseUp} onKeyUp={handleMouseUp}>
+        <EditorProvider>
+          <Editor
+            value={value}
+            containerProps={{
+              style: {
+                resize: "vertical",
+                lineHeight: 1.2,
+                fontSize: "13.5px",
+              },
+            }}
+            onChange={(e) => {
+              setValue(e.target.value);
+              onEditorChange(e.target.value);
+              // Hide selection menu on typing
+              setSelectionRect(null);
+            }}
+          >
+            <Toolbar>
+              <BtnBold />
+              <BtnItalic />
+              <BtnUnderline />
+              <BtnStrikeThrough />
+              <Separator />
+              <BtnNumberedList />
+              <BtnBulletList />
+              <Separator />
+              <BtnLink />
+            </Toolbar>
+          </Editor>
+        </EditorProvider>
+
+        {/* Floating AI Magic Wand Menu */}
+        {selectionRect && selectedText && (
+          <div
+            className="fixed z-50 flex items-center gap-1 p-1 bg-background border border-border rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+            style={{
+              top: selectionRect.top - 48,
+              left: Math.max(10, selectionRect.left + selectionRect.width / 2 - 150),
+            }}
+            onMouseDown={(e) => e.preventDefault()} // Prevent selection clear
+          >
+            {loadingRewrite ? (
+              <div className="flex items-center gap-2 px-4 py-1.5 text-sm font-medium text-muted-foreground min-w-[200px] justify-center">
+                <Loader className="w-4 h-4 animate-spin text-purple-500" />
+                Rewriting magically...
+              </div>
+            ) : (
+              <>
+                <div className="px-2 border-r border-border flex items-center bg-purple-500/10 rounded-l-lg py-1">
+                  <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleRewrite("metric")}
+                  className="h-8 text-[11px] px-2.5 font-semibold hover:bg-purple-500/10 hover:text-purple-600"
+                >
+                  <TrendingUp className="w-3 h-3 mr-1" />
+                  Metric-Driven
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleRewrite("executive")}
+                  className="h-8 text-[11px] px-2.5 font-semibold hover:bg-purple-500/10 hover:text-purple-600"
+                >
+                  <Briefcase className="w-3 h-3 mr-1" />
+                  Executive
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleRewrite("shorten")}
+                  className="h-8 text-[11px] px-2.5 font-semibold hover:bg-purple-500/10 hover:text-purple-600"
+                >
+                  <Shrink className="w-3 h-3 mr-1" />
+                  Shorten
+                </Button>
+              </>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
