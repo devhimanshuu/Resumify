@@ -47,6 +47,19 @@ const Header = () => {
                 {user?.firstName}
               </span>
               <span className="text-lg">👋</span>
+              <div className="w-px h-4 bg-border mx-2" />
+              <Link
+                href="/dashboard/jobs"
+                className="text-sm font-medium text-muted-foreground hover:text-indigo-500 transition-colors"
+              >
+                Job Board
+              </Link>
+              <Link
+                href="/dashboard/analytics"
+                className="text-sm font-medium text-muted-foreground hover:text-indigo-500 transition-colors"
+              >
+                Analytics
+              </Link>
             </div>
           ) : null}
         </div>

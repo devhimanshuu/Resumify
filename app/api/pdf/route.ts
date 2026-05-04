@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const url = `\${baseUrl}/preview/\${documentId}/resume?print=true`;
+    const url = `${baseUrl}/preview/${documentId}/resume?print=true`;
 
     const browser = await puppeteer.launch({
       headless: true,

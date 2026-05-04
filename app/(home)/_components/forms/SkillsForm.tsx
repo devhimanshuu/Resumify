@@ -11,19 +11,27 @@ import { generateThumbnail } from "@/lib/helper";
 import { toast } from "@/hooks/use-toast";
 import { Reorder } from "framer-motion";
 import { GripVertical } from "lucide-react";
+import { SkillType } from "@/types/resume.type";
 
-const initialState = {
+const initialState: SkillType = {
   name: "",
   rating: 0,
+};
+
+type LocalSkill = SkillType & {
+  _localId: string;
 };
 
 const SkillsForm = () => {
   const { resumeInfo, onUpdate } = useResumeContext();
   const { mutateAsync, isPending } = useUpdateDocument();
 
-  const [skillsList, setSkillsList] = React.useState(() => {
-    const initial = resumeInfo?.skills?.length ? resumeInfo.skills : [initialState];
-    return initial.map(item => ({ ...item, _localId: item.id || crypto.randomUUID() }));
+  const [skillsList, setSkillsList] = React.useState<LocalSkill[]>(() => {
+    const initial: SkillType[] = resumeInfo?.skills?.length ? resumeInfo.skills : [initialState];
+    return initial.map((item) => ({
+      ...item,
+      _localId: item.id?.toString() || crypto.randomUUID(),
+    }));
   });
 
   useEffect(() => {
@@ -66,12 +74,13 @@ const SkillsForm = () => {
     async (e: { preventDefault: () => void }) => {
       e.preventDefault();
       const thumbnail = await generateThumbnail();
+      const cleanedSkills = skillsList.map(({ _localId, ...rest }) => rest);
 
       await mutateAsync(
         {
           currentPosition: 1,
           thumbnail: thumbnail,
-          skills: skillsList,
+          skills: cleanedSkills,
         },
         {
           onSuccess: () => {

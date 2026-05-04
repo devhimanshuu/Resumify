@@ -13,6 +13,7 @@ import MoreOption from "./MoreOption";
 import AtsMatcher from "./AtsMatcher";
 import CoverLetterGenerator from "./CoverLetterGenerator";
 import InterviewPrepAssistant from "./InterviewPrepAssistant";
+import AutoTailorEngine from "./AutoTailorEngine";
 
 const TopSection = () => {
   const { resumeInfo, isLoading, onUpdate } = useResumeContext();
@@ -78,6 +79,7 @@ const TopSection = () => {
           />
         </div>
         <div className="flex items-center gap-1.5">
+          <AutoTailorEngine />
           <InterviewPrepAssistant />
           <CoverLetterGenerator />
           <AtsMatcher />

@@ -8,6 +8,7 @@ import SummaryForm from "./forms/SummaryForm";
 import ExperienceForm from "./forms/ExperienceForm";
 import EducationForm from "./forms/EducationForm";
 import SkillsForm from "./forms/SkillsForm";
+import { LinkedInImport } from "./LinkedInImport";
 
 const steps = [
   { id: 1, label: "Personal Info" },
@@ -78,31 +79,36 @@ const ResumeForm = () => {
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex items-center gap-2 px-4 py-2 border-b border-border/50 justify-end">
-          {activeFormIndex > 1 && (
+        <div className="flex items-center justify-between px-4 py-2 border-b border-border/50">
+          <div>
+            <LinkedInImport />
+          </div>
+          <div className="flex items-center gap-2">
+            {activeFormIndex > 1 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs gap-1 h-7"
+                onClick={() => setActiveFormIndex(activeFormIndex - 1)}
+              >
+                <ArrowLeft size="13px" />
+                Previous
+              </Button>
+            )}
+
             <Button
               variant="ghost"
               size="sm"
               className="text-xs gap-1 h-7"
-              onClick={() => setActiveFormIndex(activeFormIndex - 1)}
+              disabled={
+                activeFormIndex === 5 || resumeInfo?.status === "archived"
+              }
+              onClick={handleNext}
             >
-              <ArrowLeft size="13px" />
-              Previous
+              Next
+              <ArrowRight size="13px" />
             </Button>
-          )}
-
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs gap-1 h-7"
-            disabled={
-              activeFormIndex === 5 || resumeInfo?.status === "archived"
-            }
-            onClick={handleNext}
-          >
-            Next
-            <ArrowRight size="13px" />
-          </Button>
+          </div>
         </div>
 
         {/* Form Content */}
