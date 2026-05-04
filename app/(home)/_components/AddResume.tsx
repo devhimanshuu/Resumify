@@ -3,6 +3,7 @@ import useCreateDocument from "@/features/document/use-create-document";
 import { FileText, Loader, Plus, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useCallback } from "react";
+import { motion } from "framer-motion";
 
 const AddResume = () => {
   const router = useRouter();
@@ -22,37 +23,42 @@ const AddResume = () => {
   }, [mutate, router]);
   return (
     <>
-      <div
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         role="button"
         className="w-full cursor-pointer group"
         onClick={onCreate}
       >
         <div
           className="
+            relative overflow-hidden
             h-[220px] flex flex-col
-            rounded-2xl gap-3 w-full
+            rounded-3xl gap-4 w-full
             items-center justify-center
-            border-2 border-dashed border-border/60
-            bg-card/30
-            hover:border-indigo-500/50
-            hover:bg-indigo-500/5
+            border-2 border-dashed border-muted-foreground/30
+            bg-card hover:bg-card/80
+            hover:border-indigo-500/60
             transition-all duration-300
-            dark:bg-card/20
+            shadow-sm hover:shadow-xl hover:shadow-indigo-500/10
           "
         >
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 flex items-center justify-center group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-all duration-300">
-            <Plus size="24px" className="text-indigo-500" />
+          {/* Inner glow effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          
+          <div className="relative z-10 w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 flex items-center justify-center group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-all duration-300 group-hover:scale-110">
+            <Plus size="28px" className="text-indigo-500" />
           </div>
-          <div className="text-center">
-            <p className="text-sm font-semibold text-foreground">
-              New Resume
+          <div className="text-center relative z-10">
+            <p className="text-base font-bold text-foreground">
+              Create New Resume
             </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-sm text-muted-foreground mt-1">
               Start from scratch
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
       {isPending && (
         <div
           className="fixed inset-0 z-[9999]
