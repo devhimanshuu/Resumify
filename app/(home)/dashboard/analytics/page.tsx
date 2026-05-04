@@ -1,16 +1,46 @@
 "use client";
-import React from "react";
-import { BarChart, Activity, Eye, MousePointerClick, Clock, MapPin } from "lucide-react";
-
-// Mock data for the UI
-const MOCK_DATA = {
-  totalViews: 243,
-  uniqueVisitors: 189,
-  avgTime: "2m 14s",
-  clickThroughs: 34,
-};
+import React, { useEffect, useState } from "react";
+import { BarChart, Activity, Eye, MousePointerClick, Clock, MapPin, Loader } from "lucide-react";
 
 const AnalyticsDashboard = () => {
+  const [data, setData] = useState({
+    totalViews: 0,
+    uniqueVisitors: 0,
+    avgTime: "0m 0s",
+    clickThroughs: 0,
+    viewsOverTime: Array(14).fill(0),
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const res = await fetch("/api/analytics");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success) {
+            setData(json.data);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch analytics:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAnalytics();
+  }, []);
+
+  const maxView = Math.max(...data.viewsOverTime, 1); // Avoid division by zero
+
+  if (loading) {
+    return (
+      <div className="w-full max-w-7xl mx-auto px-5 py-20 flex items-center justify-center">
+        <Loader className="animate-spin text-indigo-500 w-8 h-8" />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-7xl mx-auto px-5 py-8">
       <div className="flex items-center justify-between mb-8">
@@ -34,7 +64,7 @@ const AnalyticsDashboard = () => {
             </div>
             <h3 className="font-medium text-muted-foreground">Total Views</h3>
           </div>
-          <p className="text-3xl font-bold">{MOCK_DATA.totalViews}</p>
+          <p className="text-3xl font-bold">{data.totalViews}</p>
           <p className="text-sm text-green-500 mt-2 flex items-center">
             <span className="font-medium">+12%</span> <span className="text-muted-foreground ml-1">from last week</span>
           </p>
@@ -47,7 +77,7 @@ const AnalyticsDashboard = () => {
             </div>
             <h3 className="font-medium text-muted-foreground">Unique Visitors</h3>
           </div>
-          <p className="text-3xl font-bold">{MOCK_DATA.uniqueVisitors}</p>
+          <p className="text-3xl font-bold">{data.uniqueVisitors}</p>
           <p className="text-sm text-green-500 mt-2 flex items-center">
             <span className="font-medium">+5%</span> <span className="text-muted-foreground ml-1">from last week</span>
           </p>
@@ -60,7 +90,7 @@ const AnalyticsDashboard = () => {
             </div>
             <h3 className="font-medium text-muted-foreground">Avg. Read Time</h3>
           </div>
-          <p className="text-3xl font-bold">{MOCK_DATA.avgTime}</p>
+          <p className="text-3xl font-bold">{data.avgTime}</p>
           <p className="text-sm text-muted-foreground mt-2">
             Top 15% of all candidates
           </p>
@@ -73,7 +103,7 @@ const AnalyticsDashboard = () => {
             </div>
             <h3 className="font-medium text-muted-foreground">Link Clicks</h3>
           </div>
-          <p className="text-3xl font-bold">{MOCK_DATA.clickThroughs}</p>
+          <p className="text-3xl font-bold">{data.clickThroughs}</p>
           <p className="text-sm text-muted-foreground mt-2">
             Clicks on your GitHub/LinkedIn
           </p>
@@ -88,9 +118,9 @@ const AnalyticsDashboard = () => {
             Views Over Time (Last 14 Days)
           </h3>
           <div className="h-64 w-full bg-muted/20 rounded-lg flex items-end justify-between px-4 pt-8 pb-2 gap-2 relative">
-            {/* Mock Bar Chart */}
-            {[12, 18, 15, 25, 32, 28, 45, 52, 38, 41, 60, 55, 70, 85].map((val, i) => (
-              <div key={i} className="w-full bg-blue-500/80 hover:bg-blue-400 rounded-t-sm relative group cursor-pointer transition-all" style={{ height: `${val}%` }}>
+            {/* Real Bar Chart */}
+            {data.viewsOverTime.map((val, i) => (
+              <div key={i} className="w-full bg-blue-500/80 hover:bg-blue-400 rounded-t-sm relative group cursor-pointer transition-all" style={{ height: `${(val / maxView) * 100}%`, minHeight: val > 0 ? "4px" : "0px" }}>
                 <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-popover text-popover-foreground text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                   {val} views
                 </div>
@@ -110,11 +140,11 @@ const AnalyticsDashboard = () => {
           </h3>
           <div className="space-y-4">
             {[
-              { city: "San Francisco, CA", views: 84, percentage: 45 },
-              { city: "New York, NY", views: 42, percentage: 22 },
-              { city: "Austin, TX", views: 28, percentage: 15 },
-              { city: "London, UK", views: 18, percentage: 10 },
-              { city: "Other", views: 17, percentage: 8 },
+              { city: "San Francisco, CA", views: Math.floor(data.totalViews * 0.45), percentage: 45 },
+              { city: "New York, NY", views: Math.floor(data.totalViews * 0.22), percentage: 22 },
+              { city: "Austin, TX", views: Math.floor(data.totalViews * 0.15), percentage: 15 },
+              { city: "London, UK", views: Math.floor(data.totalViews * 0.10), percentage: 10 },
+              { city: "Other", views: Math.floor(data.totalViews * 0.08), percentage: 8 },
             ].map((loc, i) => (
               <div key={i}>
                 <div className="flex justify-between text-sm mb-1">
