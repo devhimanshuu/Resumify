@@ -5,9 +5,11 @@ import { Loader, Plus, X } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import useUpdateDocument from "@/features/document/use-update-document";
+import { Reorder } from "framer-motion";
+import { GripVertical } from "lucide-react";
 import { generateThumbnail } from "@/lib/helper";
 import { toast } from "@/hooks/use-toast";
+import useUpdateDocument from "@/features/document/use-update-document";
 
 const initialState = {
   id: undefined,
@@ -27,16 +29,18 @@ const EducationForm = (props: { handleNext: () => void }) => {
   const { mutateAsync, isPending } = useUpdateDocument();
 
   const [educationList, setEducationList] = React.useState(() => {
-    return resumeInfo?.educations?.length
+    const list = resumeInfo?.educations?.length
       ? resumeInfo.educations
       : [initialState];
+    return list.map(item => ({ ...item, _localId: item.id || crypto.randomUUID() }));
   });
 
   useEffect(() => {
     if (!resumeInfo) return;
+    const cleanedList = educationList.map(({ _localId, ...rest }) => rest);
     onUpdate({
       ...resumeInfo,
-      educations: educationList,
+      educations: cleanedList,
     });
   }, [educationList]);
 
@@ -57,7 +61,7 @@ const EducationForm = (props: { handleNext: () => void }) => {
   };
 
   const addNewEducation = () => {
-    setEducationList([...educationList, initialState]);
+    setEducationList([...educationList, { ...initialState, _localId: crypto.randomUUID() }]);
   };
 
   const removeEducation = (index: number) => {
@@ -109,18 +113,26 @@ const EducationForm = (props: { handleNext: () => void }) => {
         <p className="text-sm">Add your education details</p>
       </div>
       <form onSubmit={handleSubmit}>
-        <div
-          className="border w-full h-auto
-              divide-y-[1px] rounded-md px-3 pb-4 my-5
-              "
+        <Reorder.Group
+          axis="y"
+          values={educationList}
+          onReorder={setEducationList}
+          className="border w-full h-auto divide-y-[1px] rounded-md px-3 pb-4 my-5"
         >
           {educationList?.map((item, index) => (
-            <div key={index}>
+            <Reorder.Item
+              key={item._localId}
+              value={item}
+              className="bg-background relative"
+            >
               <div
                 className="relative grid gride-cols-2
                   mb-5 pt-4 gap-3
                   "
               >
+                <div className="absolute -left-6 top-6 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground">
+                  <GripVertical size="16px" />
+                </div>
                 {educationList?.length > 1 && (
                   <Button
                     variant="secondary"
@@ -215,9 +227,9 @@ const EducationForm = (props: { handleNext: () => void }) => {
                     Add More Education
                   </Button>
                 )}
-            </div>
+            </Reorder.Item>
           ))}
-        </div>
+        </Reorder.Group>
         <Button className="mt-4" type="submit" disabled={isPending}>
           {isPending && <Loader size="15px" className="animate-spin" />}
           Save Changes

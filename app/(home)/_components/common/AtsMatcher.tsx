@@ -1,0 +1,244 @@
+"use client";
+import React, { useState } from "react";
+import { useResumeContext } from "@/context/resume-info-provider";
+import { AIChatSession } from "@/lib/groq-model";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Target, Loader2, CheckCircle, AlertTriangle, Lightbulb } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+
+interface AtsResult {
+  score: number;
+  missingKeywords: string[];
+  suggestions: string[];
+}
+
+const AtsMatcher = () => {
+  const { resumeInfo } = useResumeContext();
+  const [open, setOpen] = useState(false);
+  const [jobDescription, setJobDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<AtsResult | null>(null);
+
+  const handleMatch = async () => {
+    if (!jobDescription.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a job description.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const prompt = `
+        You are an expert ATS (Applicant Tracking System) and career coach.
+        Review the following Resume Data and the Job Description.
+        
+        Calculate an ATS match score (0-100) based on how well the resume matches the job description.
+        Identify key missing keywords from the resume that are present in the job description.
+        Provide 2-3 specific suggestions to improve the resume for this job.
+        
+        Respond ONLY with a valid JSON object in the following format:
+        {
+          "score": number,
+          "missingKeywords": ["keyword1", "keyword2"],
+          "suggestions": ["suggestion1", "suggestion2"]
+        }
+
+        Resume Data:
+        ${JSON.stringify(resumeInfo)}
+
+        Job Description:
+        ${jobDescription}
+      `;
+
+      const aiResponse = await AIChatSession.sendMessage(prompt);
+      let responseText = aiResponse.response.text();
+      
+      // Cleanup markdown formatting if present
+      responseText = responseText.replace(/```json/g, "").replace(/```/g, "").trim();
+      
+      const parsedData = JSON.parse(responseText);
+      setResult(parsedData);
+      
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Analysis Failed",
+        description: "Failed to analyze resume. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getColorByScore = (score: number) => {
+    if (score >= 80) return "text-green-500";
+    if (score >= 50) return "text-yellow-500";
+    return "text-red-500";
+  };
+
+  const getBgColorByScore = (score: number) => {
+    if (score >= 80) return "bg-green-500";
+    if (score >= 50) return "bg-yellow-500";
+    return "bg-red-500";
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-2 border-indigo-500 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/30">
+          <Target size={16} />
+          ATS Match
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Target className="w-5 h-5 text-indigo-500" />
+            ATS Optimization Score
+          </DialogTitle>
+          <DialogDescription>
+            Paste the job description below to see how well your resume matches and get actionable tips.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          <div className="flex flex-col gap-4">
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">
+                Job Description
+              </label>
+              <Textarea
+                placeholder="Paste the job description here..."
+                value={jobDescription}
+                onChange={(e) => setJobDescription(e.target.value)}
+                className="min-h-[250px] resize-none"
+              />
+            </div>
+            <Button
+              onClick={handleMatch}
+              disabled={loading || !jobDescription.trim()}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Analyzing Match...
+                </>
+              ) : (
+                "Calculate Score"
+              )}
+            </Button>
+          </div>
+
+          <div className="bg-muted/30 rounded-xl p-5 border border-border/50">
+            {!result && !loading && (
+              <div className="h-full flex flex-col items-center justify-center text-muted-foreground text-center">
+                <Target className="w-12 h-12 mb-3 opacity-20" />
+                <p className="text-sm">Enter a job description and calculate your score to see the analysis.</p>
+              </div>
+            )}
+            
+            {loading && (
+              <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
+                <Loader2 className="w-10 h-10 mb-4 animate-spin text-indigo-500" />
+                <p className="text-sm animate-pulse">Running AI analysis against ATS algorithms...</p>
+              </div>
+            )}
+
+            {result && !loading && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {/* Score Section */}
+                <div className="flex flex-col items-center justify-center space-y-2">
+                  <div className="relative">
+                    <svg className="w-32 h-32 transform -rotate-90">
+                      <circle
+                        cx="64"
+                        cy="64"
+                        r="56"
+                        stroke="currentColor"
+                        strokeWidth="8"
+                        fill="transparent"
+                        className="text-muted"
+                      />
+                      <circle
+                        cx="64"
+                        cy="64"
+                        r="56"
+                        stroke="currentColor"
+                        strokeWidth="8"
+                        fill="transparent"
+                        strokeDasharray={351.86}
+                        strokeDashoffset={351.86 - (351.86 * result.score) / 100}
+                        className={getColorByScore(result.score)}
+                        style={{ transition: "stroke-dashoffset 1s ease-in-out" }}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center flex-col">
+                      <span className={`text-3xl font-bold ${getColorByScore(result.score)}`}>
+                        {result.score}%
+                      </span>
+                    </div>
+                  </div>
+                  <h3 className="font-semibold text-lg">Match Score</h3>
+                </div>
+
+                {/* Missing Keywords */}
+                {result.missingKeywords.length > 0 && (
+                  <div>
+                    <h4 className="flex items-center gap-2 text-sm font-semibold mb-3">
+                      <AlertTriangle className="w-4 h-4 text-yellow-500" />
+                      Missing Keywords
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {result.missingKeywords.map((keyword, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2.5 py-1 text-xs font-medium bg-destructive/10 text-destructive rounded-md"
+                        >
+                          {keyword}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Suggestions */}
+                {result.suggestions.length > 0 && (
+                  <div>
+                    <h4 className="flex items-center gap-2 text-sm font-semibold mb-3">
+                      <Lightbulb className="w-4 h-4 text-yellow-500" />
+                      Improvement Tips
+                    </h4>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      {result.suggestions.map((suggestion, idx) => (
+                        <li key={idx} className="flex items-start gap-2">
+                          <CheckCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                          <span>{suggestion}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default AtsMatcher;

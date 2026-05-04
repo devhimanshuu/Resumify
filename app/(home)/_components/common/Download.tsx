@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
+import { useParams } from "next/navigation";
 import { DownloadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -14,52 +13,44 @@ const Download = (props: {
 }) => {
   const { title, status, isLoading } = props;
   const [loading, setLoading] = useState(false);
+  const params = useParams();
+  const documentId = params.documentId as string;
 
   const handleDownload = useCallback(async () => {
-    const resumeElement = document.getElementById("resume-preview-id");
-    if (!resumeElement) {
-      toast({
-        title: "Error",
-        description: "Could not download",
-        variant: "destructive",
-      });
-      return;
-    }
     setLoading(true);
-
     const fileName = formatFileName(title);
+    
     try {
-      const canvas = await html2canvas(resumeElement, { scale: 2 });
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF();
-      const imgWidth = 210; //A4 size in mm
-      const pageHeight = 295;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
+      const response = await fetch('/api/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ documentId }),
+      });
 
-      let position = 0;
-      9;
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+      if (!response.ok) {
+        throw new Error("Failed to generate PDF");
       }
-      pdf.save(fileName);
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error generating PDF:", error);
       toast({
         title: "Error",
-        description: "Error generating PDF:",
+        description: "Error generating PDF from server",
         variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
-  }, [title]);
+  }, [title, documentId]);
 
   return (
     <Button

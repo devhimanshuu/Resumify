@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import useUpdateDocument from "@/features/document/use-update-document";
 import RichTextEditor from "@/components/editor";
+import { Reorder, useDragControls } from "framer-motion";
+import { GripVertical } from "lucide-react";
 import { generateThumbnail } from "@/lib/helper";
 import { toast } from "@/hooks/use-toast";
 
@@ -28,17 +30,21 @@ const ExperienceForm = (props: { handleNext: () => void }) => {
 
   const { mutateAsync, isPending } = useUpdateDocument();
 
+  // Give local ids for framer-motion reorder
   const [experienceList, setExperienceList] = React.useState(() => {
-    return resumeInfo?.experiences?.length
+    const list = resumeInfo?.experiences?.length
       ? resumeInfo.experiences
       : [initialState];
+    return list.map(item => ({ ...item, _localId: item.id || crypto.randomUUID() }));
   });
 
   useEffect(() => {
     if (!resumeInfo) return;
+    // Remove _localId before saving
+    const cleanedList = experienceList.map(({ _localId, ...rest }) => rest);
     onUpdate({
       ...resumeInfo,
-      experiences: experienceList,
+      experiences: cleanedList,
     });
   }, [experienceList]);
 
@@ -59,7 +65,7 @@ const ExperienceForm = (props: { handleNext: () => void }) => {
   };
 
   const addNewExperience = () => {
-    setExperienceList([...experienceList, initialState]);
+    setExperienceList([...experienceList, { ...initialState, _localId: crypto.randomUUID() }]);
   };
 
   const removeExperience = (index: number) => {
@@ -122,18 +128,26 @@ const ExperienceForm = (props: { handleNext: () => void }) => {
         <p className="text-sm">Add previous job experience</p>
       </div>
       <form onSubmit={handleSubmit}>
-        <div
-          className="border w-full h-auto
-              divide-y-[1px] rounded-md px-3 pb-4 my-5
-              "
+        <Reorder.Group
+          axis="y"
+          values={experienceList}
+          onReorder={setExperienceList}
+          className="border w-full h-auto divide-y-[1px] rounded-md px-3 pb-4 my-5"
         >
           {experienceList?.map((item, index) => (
-            <div key={index}>
+            <Reorder.Item
+              key={item._localId}
+              value={item}
+              className="bg-background relative"
+            >
               <div
                 className="relative grid 
                   grid-cols-2 mb-5 pt-4 gap-3
               "
               >
+                <div className="absolute -left-6 top-6 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground">
+                  <GripVertical size="16px" />
+                </div>
                 {experienceList?.length > 1 && (
                   <Button
                     variant="secondary"
@@ -242,9 +256,9 @@ const ExperienceForm = (props: { handleNext: () => void }) => {
                     Add More Experience
                   </Button>
                 )}
-            </div>
+            </Reorder.Item>
           ))}
-        </div>
+        </Reorder.Group>
         <Button className="mt-4" type="submit" disabled={isPending}>
           {isPending && <Loader size="15px" className="animate-spin" />}
           Save Changes

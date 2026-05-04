@@ -9,6 +9,8 @@ import { useResumeContext } from "@/context/resume-info-provider";
 import useUpdateDocument from "@/features/document/use-update-document";
 import { generateThumbnail } from "@/lib/helper";
 import { toast } from "@/hooks/use-toast";
+import { Reorder } from "framer-motion";
+import { GripVertical } from "lucide-react";
 
 const initialState = {
   name: "",
@@ -19,18 +21,19 @@ const SkillsForm = () => {
   const { resumeInfo, onUpdate } = useResumeContext();
   const { mutateAsync, isPending } = useUpdateDocument();
 
-  const [skillsList, setSkillsList] = React.useState([
-    ...(resumeInfo?.skills || []),
-    initialState,
-  ]);
+  const [skillsList, setSkillsList] = React.useState(() => {
+    const initial = resumeInfo?.skills?.length ? resumeInfo.skills : [initialState];
+    return initial.map(item => ({ ...item, _localId: item.id || crypto.randomUUID() }));
+  });
 
   useEffect(() => {
     if (!resumeInfo) {
       return;
     }
+    const cleanedList = skillsList.map(({ _localId, ...rest }) => rest);
     onUpdate({
       ...resumeInfo,
-      skills: skillsList,
+      skills: cleanedList,
     });
   }, [skillsList]);
 
@@ -50,7 +53,7 @@ const SkillsForm = () => {
   };
 
   const addNewSkill = () => {
-    setSkillsList([...skillsList, initialState]);
+    setSkillsList([...skillsList, { ...initialState, _localId: crypto.randomUUID() }]);
   };
 
   const removeSkill = (index: number) => {
@@ -97,18 +100,26 @@ const SkillsForm = () => {
         <p className="text-sm">Add your skills information</p>
       </div>
       <form onSubmit={handleSubmit}>
-        <div
-          className="border w-full h-auto
-            divide-y-[1px] rounded-md px-3
-            pb-4 my-5"
+        <Reorder.Group
+          axis="y"
+          values={skillsList}
+          onReorder={setSkillsList}
+          className="border w-full h-auto divide-y-[1px] rounded-md px-3 pb-4 my-5"
         >
           {skillsList.map((item, index) => (
-            <div key={index}>
+            <Reorder.Item
+              key={item._localId}
+              value={item}
+              className="bg-background relative"
+            >
               <div
                 className="relative flex 
-                items-center 
+                items-center pl-6
     justify-between mb-5 pt-4 gap-3"
               >
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 mt-2 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground">
+                  <GripVertical size="16px" />
+                </div>
                 {skillsList?.length > 1 && (
                   <Button
                     variant="secondary"
@@ -161,9 +172,9 @@ const SkillsForm = () => {
                   Add More Skills
                 </Button>
               )}
-            </div>
+            </Reorder.Item>
           ))}
-        </div>
+        </Reorder.Group>
         <Button className="mt-4" type="submit" disabled={isPending}>
           {isPending && <Loader size="15px" className="animate-spin" />}
           Save & Done
