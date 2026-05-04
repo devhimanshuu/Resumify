@@ -61,11 +61,21 @@ const RichTextEditor = (props: {
       setLoading(true);
       const prompt = PROMPT.replace("{jobTitle}", jobTitle);
       const result = await AIChatSession.sendMessage(prompt);
-      const responseText = await result.response.text();
-      const validJsonArray = JSON.parse(`[${responseText}]`);
+      let responseText = await result.response.text();
+      
+      let htmlContent = "";
+      try {
+        const parsed = JSON.parse(`[${responseText}]`);
+        htmlContent = parsed?.[0] || responseText;
+      } catch (e) {
+        // AI returned raw HTML instead of JSON stringified HTML. Strip markdown just in case.
+        htmlContent = responseText.replace(/```html/gi, '').replace(/```json/gi, '').replace(/```/g, '').trim();
+        // Sometimes it still returns quotes around the HTML
+        htmlContent = htmlContent.replace(/^["']|["']$/g, "").trim();
+      }
 
-      setValue(validJsonArray?.[0]);
-      onEditorChange(validJsonArray?.[0]);
+      setValue(htmlContent);
+      onEditorChange(htmlContent);
     } catch (error) {
       console.log(error);
       toast({
