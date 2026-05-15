@@ -15,20 +15,21 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Resumify — AI-Powered Resume Builder",
+  title: "CareerForge AI — The Ultimate Career Suite",
   description:
-    "Build stunning, ATS-optimized resumes in minutes with AI. Resumify helps you land your dream job with intelligent resume generation, real-time editing, and beautiful templates.",
+    "Build stunning, ATS-optimized resumes, prepare for interviews, and track applications with our unified AI career platform.",
   keywords: [
     "resume builder",
     "AI resume",
     "ATS resume",
     "job application",
     "career tools",
+    "interview coach",
   ],
   openGraph: {
-    title: "Resumify — AI-Powered Resume Builder",
+    title: "CareerForge AI — The Ultimate Career Suite",
     description:
-      "Build stunning, ATS-optimized resumes in minutes with AI.",
+      "Build stunning, ATS-optimized resumes, prepare for interviews, and track applications with our unified AI career platform.",
     type: "website",
   },
   icons: {

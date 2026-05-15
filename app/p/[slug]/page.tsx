@@ -10,18 +10,17 @@ import {
   Linkedin,
   Download,
   Share2,
-  ChevronRight,
   ExternalLink,
   Award,
   Briefcase,
   GraduationCap,
   Layers,
-  ArrowRight,
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import PortfolioChatbot from "@/components/portfolio/PortfolioChatbot";
 
 const PublicPortfolio = () => {
   const { slug } = useParams();
@@ -279,6 +278,9 @@ const PublicPortfolio = () => {
             <span className="text-indigo-500 font-bold">Resumify AI</span>
           </div>
         </footer>
+
+        {/* Recruiter Chatbot */}
+        <PortfolioChatbot resumeInfo={data} />
       </div>
     </div>
   );

@@ -16,13 +16,13 @@ const NavBar = () => {
         <Link href="/" className="flex items-center gap-2 group">
           <Image
             src="/logo.svg"
-            alt="Resumify Logo"
+            alt="CareerForge AI Logo"
             width={32}
             height={32}
             className="shadow-lg shadow-indigo-500/25 group-hover:shadow-indigo-500/40 transition-all duration-300 rounded-lg"
           />
           <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
-            Resumify
+            CareerForge AI
           </span>
         </Link>
 

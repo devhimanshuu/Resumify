@@ -97,7 +97,7 @@ const SkillGapAnalyzer = ({ initialResumeInfo }: { initialResumeInfo?: any }) =>
             <div className="max-w-md">
               <h3 className="text-lg font-bold mb-2">Ready for a reality check?</h3>
               <p className="text-muted-foreground text-sm">
-                Our AI will compare your resume against thousands of job descriptions in your field to find exactly what's missing.
+                Our AI will compare your resume against thousands of job descriptions in your field to find exactly what&apos;s missing.
               </p>
             </div>
             <Button onClick={handleAnalyze} className="bg-emerald-600 hover:bg-emerald-700 h-12 px-8 rounded-2xl font-bold gap-2">

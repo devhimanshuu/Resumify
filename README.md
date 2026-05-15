@@ -1,4 +1,4 @@
-# 📄 Resumify: The AI-Powered Career Catalyst
+# 📄 CareerForge AI: The Ultimate Career Suite
 
 ![Next.js](https://img.shields.io/badge/Next.js-14.2-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
@@ -6,24 +6,25 @@
 ![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF?style=for-the-badge&logo=clerk)
 ![Groq](https://img.shields.io/badge/Groq-AI-F55036?style=for-the-badge&logo=groq)
 
-Resumify is a cutting-edge, AI-driven resume builder engineered to help professionals craft stunning, ATS-optimized resumes in minutes. Built on a modern Next.js stack, it seamlessly blends real-time editing with powerful AI generation capabilities.
+CareerForge AI is a cutting-edge, AI-driven career management platform engineered to help professionals craft stunning, ATS-optimized resumes, track applications, and prepare for interviews. Built on a modern Next.js stack, it seamlessly blends real-time editing with powerful AI generation capabilities to accelerate your job hunt.
 
 ---
 
 ## ✨ Key Features
 
 - **🧠 Advanced AI Generation**: Instantly generate tailored professional summaries, bullet points, and descriptions powered by Groq's blazing-fast inference engine.
-- **🎯 ATS Optimization & Matcher**: Analyze your resume against specific job descriptions to get real-time Match Scores and actionable improvement tips to beat Applicant Tracking Systems.
+- **💼 Kanban Job Tracker**: A comprehensive application pipeline to manage your interview stages, notes, and specific resume versions.
+- **✉️ AI Cover Letter Generator**: Create personalized, job-specific cover letters that leverage your resume data and targeted job descriptions.
+- **🎯 Skill Gap Analyzer**: Get data-driven insights into missing skills and industry trends, along with specific course recommendations to level up.
+- **🎙️ AI Interview Coach**: Prepare for success with role-specific interview questions and AI-powered feedback on your responses.
+- **🎨 Custom Layout Builder**: Take full control of your resume architecture with section reordering, custom typography, and adjustable spacing.
 - **⚡ Real-Time Live Preview**: Watch your resume take shape as you type. What you see is exactly what you get.
-- **🎨 Premium Customization**: Personalize your professional brand with custom theme colors, advanced typography, and a sleek dark mode interface.
-- **🖱️ Intuitive Drag & Drop**: Effortlessly reorder your experience, education, and skills sections using Framer Motion.
-- **📄 High-Fidelity PDF Export**: Generate pixel-perfect, ATS-readable PDFs using robust client-side rendering.
 - **🔗 Shareable Public Links**: Generate unique, secure links to share your dynamic web-based resume with recruiters instantly.
 - **🔒 Secure Authentication**: Enterprise-grade user authentication and session management powered by Clerk.
 
 ## 🏗️ Architecture & Tech Stack
 
-Resumify is architected for performance, scalability, and developer experience:
+CareerForge AI is architected for performance, scalability, and developer experience:
 
 - **Frontend**: Next.js 14 (App Router), React 18, Tailwind CSS, Shadcn UI, Framer Motion
 - **Backend**: Next.js API Routes, Hono (RPC), TanStack React Query
