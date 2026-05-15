@@ -8,7 +8,6 @@ import {
   DocumentSchema,
   documentTable,
   updateCombinedSchema,
-  UpdateDocumentSchema,
 } from "@/db/schema/document";
 import { getAuthUser } from "@/lib/clerk";
 import { generateDocUUID } from "@/lib/helper";
@@ -89,6 +88,7 @@ const documentRoute = new Hono()
           currentPosition,
           slug,
           template,
+          settings,
           personalInfo,
           experience,
           education,
@@ -116,7 +116,7 @@ const documentRoute = new Hono()
             return c.json({ error: "Document not found" }, 404);
           }
 
-          const resumeUpdate = {} as UpdateDocumentSchema;
+          const resumeUpdate: Record<string, any> = {};
           if (title) resumeUpdate.title = title;
           if (thumbnail) resumeUpdate.thumbnail = thumbnail;
           if (summary) resumeUpdate.summary = summary;
@@ -124,6 +124,7 @@ const documentRoute = new Hono()
           if (status) resumeUpdate.status = status;
           if (slug) resumeUpdate.slug = slug;
           if (template) resumeUpdate.template = template;
+          if (settings) resumeUpdate.settings = settings;
 
           if (currentPosition)
             resumeUpdate.currentPosition = currentPosition || 1;
@@ -141,8 +142,9 @@ const documentRoute = new Hono()
               .returning();
           }
 
-          if (personalInfo) {
-            if (!personalInfo?.firstName && !personalInfo?.lastName) {
+          const pInfo = personalInfo as any;
+          if (pInfo) {
+            if (!pInfo?.firstName && !pInfo?.lastName) {
               return;
             }
             const exists = await trx
@@ -154,12 +156,12 @@ const documentRoute = new Hono()
             if (exists.length > 0) {
               await trx
                 .update(personalInfoTable)
-                .set(personalInfo)
+                .set(pInfo)
                 .where(eq(personalInfoTable.docId, existingDocument.id));
             } else {
               await trx.insert(personalInfoTable).values({
                 docId: existingDocument.id,
-                ...personalInfo,
+                ...pInfo,
               });
             }
           }
