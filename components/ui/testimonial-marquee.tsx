@@ -73,7 +73,7 @@ const avatarColors = [
 
 function TestimonialCard({ testimonial, index }: { testimonial: Testimonial; index: number }) {
   return (
-    <div className="flex-shrink-0 w-[380px] p-6 rounded-2xl border border-border/50 bg-card/50 glass mx-3 group hover:-translate-y-1 transition-all duration-300">
+    <div className="flex-shrink-0 w-[300px] sm:w-[380px] p-6 rounded-2xl border border-border/50 bg-card/50 glass mx-3 group hover:-translate-y-1 transition-all duration-300">
       <div className="flex items-center gap-1 mb-4">
         {[...Array(testimonial.rating)].map((_, i) => (
           <Star key={i} size="14px" className="fill-yellow-400 text-yellow-400" />

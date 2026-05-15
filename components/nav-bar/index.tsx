@@ -21,7 +21,7 @@ const NavBar = () => {
             height={32}
             className="shadow-lg shadow-indigo-500/25 group-hover:shadow-indigo-500/40 transition-all duration-300 rounded-lg"
           />
-          <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
+          <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent hidden sm:block">
             CareerForge AI
           </span>
         </Link>
@@ -67,7 +67,8 @@ const NavBar = () => {
           <Button asChild className="text-sm font-semibold bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 gap-1.5 rounded-xl px-5">
             <Link href="/sign-up">
               <Sparkles size="14px" />
-              Get Started Free
+              <span className="hidden sm:inline">Get Started Free</span>
+              <span className="sm:hidden">Start</span>
             </Link>
           </Button>
         </div>

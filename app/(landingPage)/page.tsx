@@ -15,6 +15,10 @@ import {
   Trophy,
   Target,
   Briefcase,
+  Linkedin,
+  Github,
+  Globe,
+  Twitter,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -57,7 +61,7 @@ export default function Home() {
 
           {/* Heading */}
           <h1
-            className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight animate-fade-up leading-[1.1] max-w-5xl mx-auto"
+            className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tight animate-fade-up leading-[1.1] max-w-full mx-auto px-2 break-words"
             style={{ animationDelay: "0.1s" }}
           >
             <span className="text-foreground">Supercharge Your </span>
@@ -77,7 +81,9 @@ export default function Home() {
             className="mt-8 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed animate-fade-up font-medium"
             style={{ animationDelay: "0.2s" }}
           >
-            Stop guessing what recruiters want. CareerForge uses advanced AI to build ATS-optimized resumes, prepare you for interviews, and track your applications in one unified platform.
+            Stop guessing what recruiters want. CareerForge uses advanced AI to
+            build ATS-optimized resumes, prepare you for interviews, and track
+            your applications in one unified platform.
           </p>
 
           {/* CTA Buttons */}
@@ -102,41 +108,47 @@ export default function Home() {
               size="lg"
               className="w-full sm:w-auto h-14 px-8 text-base font-semibold border-indigo-500/20 hover:bg-indigo-500/10 text-foreground transition-all duration-300 gap-2 rounded-xl glass"
             >
-              <Link href="#how-it-works">
-                See How It Works
-              </Link>
+              <Link href="#how-it-works">See How It Works</Link>
             </Button>
           </div>
 
           {/* Stats Bar */}
           <div
-            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 py-8 px-6 rounded-2xl glass border-border/50 animate-fade-up w-full"
+            className="mt-16 sm:mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 py-6 sm:py-8 px-4 sm:px-6 rounded-2xl glass border-border/50 animate-fade-up w-full"
             style={{ animationDelay: "0.5s" }}
           >
             <div className="flex flex-col items-center justify-center">
-              <div className="text-3xl font-black text-foreground flex items-center">
+              <div className="text-2xl sm:text-3xl font-black text-foreground flex items-center">
                 <AnimatedCounter target={10000} suffix="+" />
               </div>
-              <p className="text-sm text-muted-foreground mt-1 font-medium">Resumes Created</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-medium text-center">
+                Resumes Created
+              </p>
             </div>
-            <div className="flex flex-col items-center justify-center border-l-0 md:border-l border-border/50">
-              <div className="text-3xl font-black text-foreground flex items-center">
+            <div className="flex flex-col items-center justify-center border-l-0 sm:border-l sm:border-border/50">
+              <div className="text-2xl sm:text-3xl font-black text-foreground flex items-center">
                 <AnimatedCounter target={95} suffix="%" />
               </div>
-              <p className="text-sm text-muted-foreground mt-1 font-medium">ATS Pass Rate</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-medium text-center">
+                ATS Pass Rate
+              </p>
             </div>
-            <div className="flex flex-col items-center justify-center border-l-0 md:border-l border-border/50">
-              <div className="text-3xl font-black text-foreground flex items-center">
+            <div className="flex flex-col items-center justify-center border-l-0 md:border-l border-border/50 pt-4 sm:pt-0">
+              <div className="text-2xl sm:text-3xl font-black text-foreground flex items-center">
                 <AnimatedCounter target={500} suffix="+" />
               </div>
-              <p className="text-sm text-muted-foreground mt-1 font-medium">Jobs Landed</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-medium text-center">
+                Jobs Landed
+              </p>
             </div>
-            <div className="flex flex-col items-center justify-center border-l-0 md:border-l border-border/50">
-              <div className="text-3xl font-black text-foreground flex items-center gap-1">
+            <div className="flex flex-col items-center justify-center border-l-0 sm:border-l sm:border-border/50 pt-4 sm:pt-0">
+              <div className="text-2xl sm:text-3xl font-black text-foreground flex items-center gap-1">
                 <AnimatedCounter target={4} suffix=".9" />
-                <Star className="fill-yellow-400 text-yellow-400 w-5 h-5 ml-1" />
+                <Star className="fill-yellow-400 text-yellow-400 w-4 h-4 sm:w-5 sm:h-5 ml-1" />
               </div>
-              <p className="text-sm text-muted-foreground mt-1 font-medium">User Rating</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-medium text-center">
+                User Rating
+              </p>
             </div>
           </div>
         </div>
@@ -162,7 +174,8 @@ export default function Home() {
               </span>
             </h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              A comprehensive system designed to optimize every stage of your job hunt.
+              A comprehensive system designed to optimize every stage of your
+              job hunt.
             </p>
           </div>
 
@@ -175,40 +188,49 @@ export default function Home() {
                 {
                   step: "01",
                   title: "Forge Your Profile",
-                  description: "Input your basic details or import from LinkedIn. Our AI analyzes your experience and generates high-impact, quantified bullet points tailored to your target roles.",
+                  description:
+                    "Input your basic details or import from LinkedIn. Our AI analyzes your experience and generates high-impact, quantified bullet points tailored to your target roles.",
                   icon: <Bot className="text-indigo-500" size={24} />,
-                  align: "left"
+                  align: "left",
                 },
                 {
                   step: "02",
                   title: "Optimize for ATS",
-                  description: "Select from our library of premium, ATS-friendly templates. Fine-tune typography, spacing, and order with the drag-and-drop layout builder.",
+                  description:
+                    "Select from our library of premium, ATS-friendly templates. Fine-tune typography, spacing, and order with the drag-and-drop layout builder.",
                   icon: <Shield className="text-indigo-500" size={24} />,
-                  align: "right"
+                  align: "right",
                 },
                 {
                   step: "03",
                   title: "Track & Apply",
-                  description: "Use the built-in Kanban board to manage applications. Generate specific resume versions and targeted cover letters for each opportunity with one click.",
+                  description:
+                    "Use the built-in Kanban board to manage applications. Generate specific resume versions and targeted cover letters for each opportunity with one click.",
                   icon: <Briefcase className="text-indigo-500" size={24} />,
-                  align: "left"
+                  align: "left",
                 },
                 {
                   step: "04",
                   title: "Prep & Ace",
-                  description: "Identify skill gaps and practice with the AI Interview Coach. Get real-time feedback on your answers before you face the real hiring manager.",
+                  description:
+                    "Identify skill gaps and practice with the AI Interview Coach. Get real-time feedback on your answers before you face the real hiring manager.",
                   icon: <Trophy className="text-indigo-500" size={24} />,
-                  align: "right"
-                }
+                  align: "right",
+                },
               ].map((item, i) => (
-                <div key={i} className={`relative flex flex-col md:flex-row items-center justify-between w-full ${item.align === 'left' ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                <div
+                  key={i}
+                  className={`relative flex flex-col md:flex-row items-center justify-between w-full ${item.align === "left" ? "md:flex-row" : "md:flex-row-reverse"}`}
+                >
                   {/* Content Box */}
                   <div className="w-full md:w-5/12 z-10 mb-8 md:mb-0">
                     <div className="p-8 rounded-2xl border border-border/50 bg-card/50 glass hover:bg-card/80 transition-colors group">
                       <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center mb-6 border border-indigo-500/20 group-hover:scale-110 transition-transform">
                         {item.icon}
                       </div>
-                      <div className="text-sm font-bold text-indigo-500 mb-2">STEP {item.step}</div>
+                      <div className="text-sm font-bold text-indigo-500 mb-2">
+                        STEP {item.step}
+                      </div>
                       <h3 className="font-bold text-2xl mb-3">{item.title}</h3>
                       <p className="text-muted-foreground leading-relaxed">
                         {item.description}
@@ -238,10 +260,11 @@ export default function Home() {
             Loved by <span className="text-indigo-500">Professionals</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            See how CareerForge AI is transforming job searches across industries.
+            See how CareerForge AI is transforming job searches across
+            industries.
           </p>
         </div>
-        
+
         <TestimonialMarquee />
       </section>
 
@@ -251,7 +274,10 @@ export default function Home() {
           <div className="relative p-12 md:p-20 rounded-[2.5rem] bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800 overflow-hidden shadow-2xl animate-glow-pulse">
             {/* Decorative elements */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-float" />
-            <div className="absolute bottom-0 left-0 w-72 h-72 bg-white/5 rounded-full blur-2xl animate-float" style={{ animationDelay: "2s" }} />
+            <div
+              className="absolute bottom-0 left-0 w-72 h-72 bg-white/5 rounded-full blur-2xl animate-float"
+              style={{ animationDelay: "2s" }}
+            />
             <FallingPattern
               className="absolute inset-0 opacity-20"
               color="rgba(255,255,255,0.5)"
@@ -265,9 +291,11 @@ export default function Home() {
                 Starts Here
               </h2>
               <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10">
-                Join thousands of professionals who have already accelerated their careers. Build your ATS-optimized resume in minutes, not hours.
+                Join thousands of professionals who have already accelerated
+                their careers. Build your ATS-optimized resume in minutes, not
+                hours.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button
                   asChild
@@ -305,60 +333,180 @@ export default function Home() {
               </span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-sm mb-6">
-              The ultimate AI-powered career platform. Craft stunning resumes, ace your interviews, and land your dream job faster than ever.
+              The ultimate AI-powered career platform. Craft stunning resumes,
+              ace your interviews, and land your dream job faster than ever.
             </p>
             <div className="flex items-center gap-4">
-              {/* Social icons placeholders */}
-              <a href="#" className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 hover:bg-indigo-500 hover:text-white transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" /></svg>
+              <a
+                href="https://www.linkedin.com/in/himanshu-guptaa"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 hover:bg-indigo-500 hover:text-white transition-colors"
+              >
+                <Linkedin size={20} />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 hover:bg-indigo-500 hover:text-white transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" /></svg>
+              <a
+                href="https://www.github.com/devhimanshuu"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 hover:bg-indigo-500 hover:text-white transition-colors"
+              >
+                <Github size={20} />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 hover:bg-indigo-500 hover:text-white transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fillRule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clipRule="evenodd" /></svg>
+              <a
+                href="https://himanshuguptaa.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 hover:bg-indigo-500 hover:text-white transition-colors"
+              >
+                <Globe size={20} />
+              </a>
+              <a
+                href="https://x.com/devhimanshuu"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 hover:bg-indigo-500 hover:text-white transition-colors"
+              >
+                <Twitter size={20} />
               </a>
             </div>
           </div>
-          
+
           <div>
             <h4 className="font-semibold mb-4 text-foreground">Platform</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
-              <li><Link href="#" className="hover:text-indigo-500 transition-colors">Resume Builder</Link></li>
-              <li><Link href="#" className="hover:text-indigo-500 transition-colors">Cover Letters</Link></li>
-              <li><Link href="#" className="hover:text-indigo-500 transition-colors">Job Tracker</Link></li>
-              <li><Link href="#" className="hover:text-indigo-500 transition-colors">Interview Coach</Link></li>
+              <li>
+                <Link
+                  href="#"
+                  className="hover:text-indigo-500 transition-colors"
+                >
+                  Resume Builder
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="hover:text-indigo-500 transition-colors"
+                >
+                  Cover Letters
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="hover:text-indigo-500 transition-colors"
+                >
+                  Job Tracker
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="hover:text-indigo-500 transition-colors"
+                >
+                  Interview Coach
+                </Link>
+              </li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="font-semibold mb-4 text-foreground">Resources</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
-              <li><Link href="#" className="hover:text-indigo-500 transition-colors">Career Blog</Link></li>
-              <li><Link href="#" className="hover:text-indigo-500 transition-colors">ATS Templates</Link></li>
-              <li><Link href="#" className="hover:text-indigo-500 transition-colors">Interview Questions</Link></li>
-              <li><Link href="#" className="hover:text-indigo-500 transition-colors">Help Center</Link></li>
+              <li>
+                <Link
+                  href="#"
+                  className="hover:text-indigo-500 transition-colors"
+                >
+                  Career Blog
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="hover:text-indigo-500 transition-colors"
+                >
+                  ATS Templates
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="hover:text-indigo-500 transition-colors"
+                >
+                  Interview Questions
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="hover:text-indigo-500 transition-colors"
+                >
+                  Help Center
+                </Link>
+              </li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="font-semibold mb-4 text-foreground">Company</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
-              <li><Link href="#" className="hover:text-indigo-500 transition-colors">About Us</Link></li>
-              <li><Link href="#" className="hover:text-indigo-500 transition-colors">Pricing</Link></li>
-              <li><Link href="#" className="hover:text-indigo-500 transition-colors">Privacy Policy</Link></li>
-              <li><Link href="#" className="hover:text-indigo-500 transition-colors">Terms of Service</Link></li>
+              <li>
+                <Link
+                  href="#"
+                  className="hover:text-indigo-500 transition-colors"
+                >
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="hover:text-indigo-500 transition-colors"
+                >
+                  Pricing
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="hover:text-indigo-500 transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="hover:text-indigo-500 transition-colors"
+                >
+                  Terms of Service
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
-        
-        <div className="max-w-6xl mx-auto pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
+
+        <div className="max-w-6xl mx-auto pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-6">
+          <p className="text-sm text-muted-foreground md:flex-1 text-center md:text-left">
             © {new Date().getFullYear()} CareerForge AI. All rights reserved.
           </p>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-background px-3 py-1.5 rounded-full border border-border">
-            <span className="flex h-2 w-2 rounded-full bg-emerald-500" />
-            All systems operational
+          
+          <div className="md:flex-1 flex justify-center">
+            <div className="flex items-center gap-2 text-sm font-mono text-muted-foreground bg-indigo-500/5 px-4 py-1.5 rounded-full border border-indigo-500/20 hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-all">
+              <span className="text-indigo-500 font-bold">&lt;/&gt;</span>
+              <span>crafted_by:</span>
+              <a href="https://himanshuguptaa.vercel.app" target="_blank" rel="noopener noreferrer" className="font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
+                himanshu_gupta
+              </a>
+            </div>
+          </div>
+
+          <div className="md:flex-1 flex justify-center md:justify-end">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-background px-3 py-1.5 rounded-full border border-border">
+              <span className="flex h-2 w-2 rounded-full bg-emerald-500" />
+              All systems operational
+            </div>
           </div>
         </div>
       </footer>
