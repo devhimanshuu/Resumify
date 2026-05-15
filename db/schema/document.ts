@@ -40,6 +40,12 @@ export const documentTable = pgTable("document", {
   views: integer("views").notNull().default(0),
   uniqueVisitors: integer("unique_visitors").notNull().default(0),
   clickThroughs: integer("click_throughs").notNull().default(0),
+  responses: integer("responses").notNull().default(0),
+
+  
+  // Branching
+  parentId: varchar("parent_id", { length: 255 }),
+  branchName: varchar("branch_name", { length: 255 }),
 
   
   createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
@@ -71,7 +77,12 @@ export const createDocumentTableSchema = createInsertSchema(documentTable, {
   currentPosition: true,
   slug: true,
   template: true,
+  parentId: true,
+  branchName: true,
+  responses: true,
 });
+
+
 
 
 export const updateCombinedSchema = z.object({
@@ -83,7 +94,12 @@ export const updateCombinedSchema = z.object({
   currentPosition: createDocumentTableSchema.shape.currentPosition.optional(),
   slug: createDocumentTableSchema.shape.slug.optional(),
   template: createDocumentTableSchema.shape.template.optional(),
+  parentId: createDocumentTableSchema.shape.parentId.optional(),
+  branchName: createDocumentTableSchema.shape.branchName.optional(),
+  responses: createDocumentTableSchema.shape.responses.optional(),
   personalInfo: personalInfoTableSchema.optional(),
+
+
 
   education: z.array(educationTableSchema).optional(),
   experience: z.array(experienceTableSchema).optional(),

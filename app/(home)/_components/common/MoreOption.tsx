@@ -10,8 +10,10 @@ import {
 import { useResumeContext } from "@/context/resume-info-provider";
 import useUpdateDocument from "@/features/document/use-update-document";
 import { toast } from "@/hooks/use-toast";
-import { Loader, MoreHorizontal, Redo, Trash2 } from "lucide-react";
+import { GitBranch, Loader, MoreHorizontal, Redo, Trash2 } from "lucide-react";
 import { StatusType } from "@/types/resume.type";
+import ResumeBranchDialog from "./ResumeBranchDialog";
+
 
 const MoreOption = () => {
   const router = useRouter();
@@ -90,7 +92,21 @@ const MoreOption = () => {
               </Button>
             )}
           </DropdownMenuItem>
+
+          <ResumeBranchDialog
+            documentId={resumeInfo?.documentId || ""}
+            title={resumeInfo?.title || ""}
+          >
+            <DropdownMenuItem
+              onSelect={(e) => e.preventDefault()}
+              className="gap-2 cursor-pointer"
+            >
+              <GitBranch size="15px" />
+              Branch Version
+            </DropdownMenuItem>
+          </ResumeBranchDialog>
         </DropdownMenuContent>
+
       </DropdownMenu>
     </>
   );

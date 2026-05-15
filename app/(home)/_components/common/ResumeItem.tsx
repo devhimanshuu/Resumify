@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FC, useCallback, useMemo } from "react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
@@ -9,9 +11,21 @@ import {
   Lock,
   Calendar,
   ArrowUpRight,
+  GitBranch,
+  Trash2,
+  Loader,
 } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import ResumeBranchDialog from "./ResumeBranchDialog";
+import useUpdateDocument from "@/features/document/use-update-document";
+import { toast } from "@/hooks/use-toast";
 
 interface PropType {
   documentId: string;
@@ -20,6 +34,8 @@ interface PropType {
   themeColor: string | null;
   thumbnail: string | null;
   updatedAt: string;
+  parentId?: string | null;
+  branchName?: string | null;
 }
 
 const ResumeItem: FC<PropType> = ({
@@ -29,8 +45,11 @@ const ResumeItem: FC<PropType> = ({
   themeColor,
   thumbnail,
   updatedAt,
+  parentId,
+  branchName,
 }) => {
   const router = useRouter();
+  const { mutateAsync, isPending } = useUpdateDocument();
 
   const docDate = useMemo(() => {
     if (!updatedAt) return null;
@@ -41,6 +60,19 @@ const ResumeItem: FC<PropType> = ({
   const gotoDoc = useCallback(() => {
     router.push(`/dashboard/document/${documentId}/edit`);
   }, [router, documentId]);
+
+  const onMoveToTrash = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await mutateAsync({ status: "archived" });
+      toast({
+        title: "Success",
+        description: "Moved to trash successfully",
+      });
+    } catch (error) {
+      // toast handled in hook
+    }
+  };
 
   return (
     <motion.div
@@ -62,7 +94,6 @@ const ResumeItem: FC<PropType> = ({
     >
       {/* Thumbnail */}
       <div className="w-full h-[170px] relative overflow-hidden bg-muted/20">
-        {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-card/60 via-transparent to-transparent z-[1] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
         {thumbnail ? (
@@ -81,6 +112,16 @@ const ResumeItem: FC<PropType> = ({
                   className="text-muted-foreground/30 group-hover:text-muted-foreground/50 transition-colors"
                 />
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Branch indicator */}
+        {parentId && (
+          <div className="absolute top-3 left-3 z-[2]">
+            <div className="flex items-center gap-1 rounded-md px-2 py-0.5 text-[9px] font-bold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 backdrop-blur-md uppercase tracking-tight">
+              <GitBranch size="10px" />
+              {branchName || "Branch"}
             </div>
           </div>
         )}
@@ -119,7 +160,6 @@ const ResumeItem: FC<PropType> = ({
           </div>
         </div>
 
-        {/* Theme color accent */}
         {themeColor && (
           <div
             className="absolute bottom-0 left-0 right-0 h-0.5 z-[2]"
@@ -133,17 +173,39 @@ const ResumeItem: FC<PropType> = ({
 
       {/* Info */}
       <div className="p-4 pt-3.5">
-        <div className="flex items-center justify-between">
-          <h5 className="font-semibold text-sm truncate block w-full pr-2 text-foreground group-hover:text-foreground/90 transition-colors">
+        <div className="flex items-center justify-between gap-2">
+          <h5 className="font-semibold text-sm truncate block flex-1 text-foreground group-hover:text-foreground/90 transition-colors">
             {title}
           </h5>
-          <button
-            className="text-muted-foreground/40 hover:text-foreground transition-colors shrink-0 p-0.5 rounded-md hover:bg-muted/50"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <EllipsisVertical size="16px" />
-          </button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+              <button className="text-muted-foreground/40 hover:text-foreground transition-colors shrink-0 p-1 rounded-md hover:bg-muted/80">
+                <EllipsisVertical size="16px" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 p-1">
+              <ResumeBranchDialog documentId={documentId} title={title}>
+                <DropdownMenuItem
+                  onSelect={(e) => e.preventDefault()}
+                  className="gap-2 cursor-pointer py-2"
+                >
+                  <GitBranch size={14} className="text-indigo-500" />
+                  <span className="font-medium">Branch Resume</span>
+                </DropdownMenuItem>
+              </ResumeBranchDialog>
+
+              <DropdownMenuItem
+                onClick={onMoveToTrash}
+                className="gap-2 cursor-pointer py-2 text-destructive focus:text-destructive focus:bg-destructive/10"
+              >
+                <Trash2 size={14} />
+                <span className="font-medium">Move to Trash</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
+
         <div className="flex items-center gap-1.5 mt-2">
           <Calendar size={10} className="text-muted-foreground/50" />
           <p className="text-[11px] text-muted-foreground/70 font-medium">

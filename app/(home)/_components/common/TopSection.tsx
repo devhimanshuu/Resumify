@@ -69,8 +69,8 @@ const TopSection = () => {
           This resume is in the trash bin
         </div>
       )}
-      <div className="w-full flex items-center justify-between border-b border-border/50 pb-3">
-        <div className="flex items-center gap-2">
+      <div className="w-full flex items-center justify-between border-b border-border/50 pb-3 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
           <ResumeTitle
             isLoading={isLoading || isPending}
             initialTitle={resumeInfo?.title || ""}
@@ -78,20 +78,22 @@ const TopSection = () => {
             onSave={(value) => handleTitle(value)}
           />
         </div>
-        <div className="flex items-center gap-1.5">
-          <AutoTailorEngine />
-          <InterviewPrepAssistant />
-          <CoverLetterGenerator />
-          <AtsMatcher />
-          <ThemeColor />
-          <PreviewModal />
-          <Download
-            title={resumeInfo?.title || "Untitled Resume"}
-            status={resumeInfo?.status}
-            isLoading={isLoading}
-          />
-          <Share />
-          <MoreOption />
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth">
+          <div className="flex items-center gap-1.5 flex-nowrap">
+            <AutoTailorEngine />
+            <InterviewPrepAssistant />
+            <CoverLetterGenerator />
+            <AtsMatcher />
+            <ThemeColor />
+            <PreviewModal />
+            <Download
+              title={resumeInfo?.title || "Untitled Resume"}
+              status={resumeInfo?.status}
+              isLoading={isLoading}
+            />
+            <Share />
+            <MoreOption />
+          </div>
         </div>
       </div>
     </>

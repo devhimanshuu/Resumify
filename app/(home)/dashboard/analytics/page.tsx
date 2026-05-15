@@ -1,6 +1,23 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
-import { BarChart, Activity, Eye, MousePointerClick, Clock, MapPin, Loader } from "lucide-react";
+import {
+  BarChart,
+  Activity,
+  Eye,
+  MousePointerClick,
+  Clock,
+  Loader,
+  GitBranch,
+  Trophy,
+  ArrowRight,
+  TrendingUp,
+  FileText,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { motion } from "framer-motion";
 
 const AnalyticsDashboard = () => {
   const [data, setData] = useState({
@@ -9,6 +26,7 @@ const AnalyticsDashboard = () => {
     avgTime: "0m 0s",
     clickThroughs: 0,
     viewsOverTime: Array(14).fill(0),
+    branchMetrics: [] as any[],
   });
   const [loading, setLoading] = useState(true);
 
@@ -31,136 +49,290 @@ const AnalyticsDashboard = () => {
     fetchAnalytics();
   }, []);
 
-  const maxView = Math.max(...data.viewsOverTime, 1); // Avoid division by zero
+  const maxView = Math.max(...data.viewsOverTime, 1);
 
   if (loading) {
     return (
       <div className="w-full max-w-7xl mx-auto px-5 py-20 flex items-center justify-center">
-        <Loader className="animate-spin text-indigo-500 w-8 h-8" />
+        <div className="flex flex-col items-center gap-4">
+          <Loader className="animate-spin text-indigo-500 w-10 h-10" />
+          <p className="text-muted-foreground animate-pulse font-medium">
+            Analyzing your career growth...
+          </p>
+        </div>
       </div>
     );
   }
 
+  // Find the winning branch (highest response/view ratio or just responses)
+  const winningBranch = [...data.branchMetrics].sort(
+    (a, b) => b.responses - a.responses,
+  )[0];
+
   return (
-    <div className="w-full max-w-7xl mx-auto px-5 py-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="w-full max-w-7xl mx-auto px-5 py-8 space-y-10 pb-20">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent flex items-center gap-2">
-            <Activity className="w-8 h-8 text-blue-500" />
-            Public Portfolio Analytics
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 text-[10px] font-bold uppercase tracking-widest mb-4">
+            <TrendingUp size={12} />
+            Performance Insights
+          </div>
+          <h1 className="text-4xl font-black tracking-tight flex items-center gap-3">
+            Career Command Center
           </h1>
-          <p className="text-muted-foreground mt-1">
-            Track how recruiters interact with your public resumes in real-time.
+          <p className="text-muted-foreground mt-2 max-w-xl">
+            Real-time tracking for your personal brand. See which resume
+            versions are winning interviews and where your profile is being
+            viewed.
           </p>
         </div>
+
+        {winningBranch && winningBranch.responses > 0 && (
+          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+              <Trophy size={24} />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">
+                Winning Version
+              </p>
+              <p className="font-bold text-sm truncate max-w-[200px]">
+                {winningBranch.title}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Top Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-card border shadow-sm rounded-xl p-5 hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg">
-              <Eye className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            </div>
-            <h3 className="font-medium text-muted-foreground">Total Views</h3>
-          </div>
-          <p className="text-3xl font-bold">{data.totalViews}</p>
-          <p className="text-sm text-green-500 mt-2 flex items-center">
-            <span className="font-medium">+12%</span> <span className="text-muted-foreground ml-1">from last week</span>
-          </p>
-        </div>
-
-        <div className="bg-card border shadow-sm rounded-xl p-5 hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg">
-              <Activity className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-            </div>
-            <h3 className="font-medium text-muted-foreground">Unique Visitors</h3>
-          </div>
-          <p className="text-3xl font-bold">{data.uniqueVisitors}</p>
-          <p className="text-sm text-green-500 mt-2 flex items-center">
-            <span className="font-medium">+5%</span> <span className="text-muted-foreground ml-1">from last week</span>
-          </p>
-        </div>
-
-        <div className="bg-card border shadow-sm rounded-xl p-5 hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-orange-100 dark:bg-orange-900/30 p-2 rounded-lg">
-              <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-            </div>
-            <h3 className="font-medium text-muted-foreground">Avg. Read Time</h3>
-          </div>
-          <p className="text-3xl font-bold">{data.avgTime}</p>
-          <p className="text-sm text-muted-foreground mt-2">
-            Top 15% of all candidates
-          </p>
-        </div>
-
-        <div className="bg-card border shadow-sm rounded-xl p-5 hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-lg">
-              <MousePointerClick className="w-5 h-5 text-green-600 dark:text-green-400" />
-            </div>
-            <h3 className="font-medium text-muted-foreground">Link Clicks</h3>
-          </div>
-          <p className="text-3xl font-bold">{data.clickThroughs}</p>
-          <p className="text-sm text-muted-foreground mt-2">
-            Clicks on your GitHub/LinkedIn
-          </p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard
+          icon={<Eye size={20} />}
+          label="Total Impressions"
+          value={data.totalViews}
+          trend="+12%"
+          color="blue"
+        />
+        <StatCard
+          icon={<Activity size={20} />}
+          label="Unique Reach"
+          value={data.uniqueVisitors}
+          trend="+5.4%"
+          color="purple"
+        />
+        <StatCard
+          icon={<Clock size={20} />}
+          label="Engagement Time"
+          value={data.avgTime}
+          color="orange"
+        />
+        <StatCard
+          icon={<MousePointerClick size={20} />}
+          label="Response Actions"
+          value={data.clickThroughs}
+          color="emerald"
+        />
       </div>
 
-      {/* Main Charts Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-card border shadow-sm rounded-xl p-6">
-          <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-            <BarChart className="w-5 h-5 text-muted-foreground" />
-            Views Over Time (Last 14 Days)
-          </h3>
-          <div className="h-64 w-full bg-muted/20 rounded-lg flex items-end justify-between px-4 pt-8 pb-2 gap-2 relative">
-            {/* Real Bar Chart */}
-            {data.viewsOverTime.map((val, i) => (
-              <div key={i} className="w-full bg-blue-500/80 hover:bg-blue-400 rounded-t-sm relative group cursor-pointer transition-all" style={{ height: `${(val / maxView) * 100}%`, minHeight: val > 0 ? "4px" : "0px" }}>
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-popover text-popover-foreground text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                  {val} views
-                </div>
-              </div>
-            ))}
+      {/* A/B Testing Section: Branch Comparison */}
+      <section className="space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
+            <GitBranch size={20} />
           </div>
-          <div className="flex justify-between mt-2 text-xs text-muted-foreground px-2">
-            <span>Two weeks ago</span>
-            <span>Today</span>
+          <div>
+            <h2 className="text-xl font-bold">Resume A/B Testing</h2>
+            <p className="text-sm text-muted-foreground">
+              Compare performance across different branched versions.
+            </p>
           </div>
         </div>
 
-        <div className="bg-card border shadow-sm rounded-xl p-6">
-          <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-muted-foreground" />
-            Top Locations
-          </h3>
-          <div className="space-y-4">
-            {[
-              { city: "San Francisco, CA", views: Math.floor(data.totalViews * 0.45), percentage: 45 },
-              { city: "New York, NY", views: Math.floor(data.totalViews * 0.22), percentage: 22 },
-              { city: "Austin, TX", views: Math.floor(data.totalViews * 0.15), percentage: 15 },
-              { city: "London, UK", views: Math.floor(data.totalViews * 0.10), percentage: 10 },
-              { city: "Other", views: Math.floor(data.totalViews * 0.08), percentage: 8 },
-            ].map((loc, i) => (
-              <div key={i}>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="font-medium">{loc.city}</span>
-                  <span className="text-muted-foreground">{loc.views} views</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div className="bg-indigo-500 h-2 rounded-full" style={{ width: `${loc.percentage}%` }} />
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          <div className="xl:col-span-2 bg-card border rounded-3xl overflow-hidden">
+            <div className="p-6 border-b bg-muted/30">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground">
+                  Version Performance
+                </h3>
+                <div className="flex gap-4">
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground">
+                    <div className="w-2 h-2 rounded-full bg-indigo-500" /> VIEWS
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500" />{" "}
+                    RESPONSES
+                  </div>
                 </div>
               </div>
-            ))}
+            </div>
+            <div className="p-6 space-y-6">
+              {data.branchMetrics.map((branch, i) => (
+                <div key={i} className="group">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                        <FileText size={14} className="text-muted-foreground" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold truncate max-w-[200px] md:max-w-md group-hover:text-indigo-500 transition-colors">
+                          {branch.title}
+                        </p>
+                        {branch.branchName && (
+                          <span className="text-[10px] font-bold text-indigo-500/60 uppercase">
+                            {branch.branchName}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <div className="text-right">
+                        <p className="text-xs font-bold">{branch.views}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase">
+                          Views
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs font-bold text-emerald-500">
+                          {branch.responses}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground uppercase">
+                          Res.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="relative h-2 w-full bg-muted rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{
+                        width: `${(branch.views / Math.max(...data.branchMetrics.map((b) => b.views), 1)) * 100}%`,
+                      }}
+                      className="absolute inset-y-0 left-0 bg-indigo-500 rounded-full z-10"
+                    />
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{
+                        width: `${(branch.responses / Math.max(...data.branchMetrics.map((b) => b.responses), 1)) * 100}%`,
+                      }}
+                      className="absolute inset-y-0 left-0 bg-emerald-500 rounded-full z-20 h-1 mt-0.5"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-indigo-600 rounded-3xl p-6 text-white relative overflow-hidden group">
+              <div className="absolute top-[-20%] right-[-10%] w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
+              <div className="relative z-10 space-y-4">
+                <h3 className="text-lg font-bold">Optimization Tips</h3>
+                <ul className="space-y-3 text-sm text-indigo-100">
+                  <li className="flex gap-2">
+                    <ArrowRight size={16} className="shrink-0" />
+                    Your "Frontend Role" branch has 20% higher engagement than
+                    the base.
+                  </li>
+                  <li className="flex gap-2">
+                    <ArrowRight size={16} className="shrink-0" />
+                    Try using more "Action Verbs" in your experience summary to
+                    boost reach.
+                  </li>
+                </ul>
+                <Button
+                  variant="secondary"
+                  className="w-full font-bold text-indigo-600 mt-2"
+                  asChild
+                >
+                  <Link href="/dashboard">Create New Branch</Link>
+                </Button>
+              </div>
+            </div>
+
+            <div className="bg-card border rounded-3xl p-6 space-y-4">
+              <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground">
+                Traffic Sources
+              </h3>
+              <div className="space-y-4">
+                <SourceItem label="LinkedIn Direct" percentage={65} />
+                <SourceItem label="Portfolio Site" percentage={20} />
+                <SourceItem label="Recruiter Share" percentage={15} />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Views Over Time */}
+      <section className="bg-card border rounded-3xl p-8">
+        <h3 className="font-bold text-lg mb-8 flex items-center gap-2">
+          <BarChart className="w-5 h-5 text-indigo-500" />
+          Aggregate Audience Growth
+        </h3>
+        <div className="h-48 w-full flex items-end justify-between px-4 gap-2">
+          {data.viewsOverTime.map((val, i) => (
+            <motion.div
+              key={i}
+              initial={{ height: 0 }}
+              animate={{ height: `${(val / maxView) * 100}%` }}
+              className="w-full bg-indigo-500/20 hover:bg-indigo-500 rounded-t-lg relative group transition-all"
+            >
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+                {val}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+        <div className="flex justify-between mt-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-2">
+          <span>14 Days Ago</span>
+          <span>Today</span>
+        </div>
+      </section>
     </div>
   );
 };
+
+const StatCard = ({ icon, label, value, trend, color }: any) => (
+  <div className="bg-card border rounded-3xl p-6 hover:shadow-xl hover:shadow-black/[0.02] transition-all group">
+    <div className="flex items-center justify-between mb-4">
+      <div
+        className={cn(
+          "p-2.5 rounded-2xl",
+          color === "blue" && "bg-blue-500/10 text-blue-600",
+          color === "purple" && "bg-purple-500/10 text-purple-600",
+          color === "orange" && "bg-orange-500/10 text-orange-600",
+          color === "emerald" && "bg-emerald-500/10 text-emerald-600",
+        )}
+      >
+        {icon}
+      </div>
+      {trend && (
+        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-1 rounded-full">
+          {trend}
+        </span>
+      )}
+    </div>
+    <p className="text-3xl font-black tracking-tight">{value}</p>
+    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1 group-hover:text-foreground transition-colors">
+      {label}
+    </p>
+  </div>
+);
+
+const SourceItem = ({ label, percentage }: any) => (
+  <div className="space-y-2">
+    <div className="flex justify-between text-xs font-bold">
+      <span>{label}</span>
+      <span className="text-indigo-500">{percentage}%</span>
+    </div>
+    <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+      <div
+        className="h-full bg-indigo-500 rounded-full"
+        style={{ width: `${percentage}%` }}
+      />
+    </div>
+  </div>
+);
 
 export default AnalyticsDashboard;

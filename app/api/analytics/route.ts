@@ -26,6 +26,16 @@ export async function GET(request: Request) {
       clickThroughs += doc.clickThroughs || 0;
     }
 
+    const branchMetrics = userDocuments.map(doc => ({
+      title: doc.title,
+      views: doc.views || 0,
+      responses: doc.responses || 0,
+      branchName: doc.branchName,
+      isBranch: !!doc.parentId,
+      documentId: doc.documentId
+    })).sort((a, b) => b.views - a.views);
+
+
     // Mock an avg read time based on views for now, or just hardcode a realistic one
     const avgTime = "2m " + Math.floor(Math.random() * 60) + "s";
 
@@ -36,10 +46,11 @@ export async function GET(request: Request) {
         uniqueVisitors,
         avgTime,
         clickThroughs,
-        // Since we aren't tracking full time-series data yet, we can generate a realistic graph array based on total views
         viewsOverTime: generateViewsArray(totalViews),
+        branchMetrics,
       },
     });
+
   } catch (error) {
     console.error("Analytics Error:", error);
     return NextResponse.json({ error: "Failed to fetch analytics" }, { status: 500 });

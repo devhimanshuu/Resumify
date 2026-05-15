@@ -523,7 +523,122 @@ const documentRoute = new Hono()
       }
     }
   )
+  .post(
+    "/branch/:documentId",
+    zValidator(
+      "param",
+      z.object({
+        documentId: z.string(),
+      })
+    ),
+    zValidator(
+      "json",
+      z.object({
+        branchName: z.string(),
+      })
+    ),
+    getAuthUser,
+    async (c) => {
+      try {
+        const user = c.get("user");
+        const userId = user.id;
+        const { documentId } = c.req.valid("param");
+        const { branchName } = c.req.valid("json");
+
+        const parentDoc = await db.query.documentTable.findFirst({
+          where: and(
+            eq(documentTable.userId, userId),
+            eq(documentTable.documentId, documentId)
+          ),
+          with: {
+            personalInfo: true,
+            experiences: true,
+            educations: true,
+            skills: true,
+          },
+        });
+
+        if (!parentDoc) {
+          return c.json({ error: "Parent document not found" }, 404);
+        }
+
+        const newDocumentId = generateDocUUID();
+        const newDocTitle = `${parentDoc.title} (${branchName})`;
+
+        const [newDoc] = await db.transaction(async (trx) => {
+          const [insertedDoc] = await trx
+            .insert(documentTable)
+            .values({
+              title: newDocTitle,
+              userId: userId,
+              documentId: newDocumentId,
+              authorName: parentDoc.authorName,
+              authorEmail: parentDoc.authorEmail,
+              summary: parentDoc.summary,
+              themeColor: parentDoc.themeColor,
+              thumbnail: parentDoc.thumbnail,
+              status: "private",
+              template: parentDoc.template,
+              parentId: parentDoc.documentId,
+              branchName: branchName,
+            })
+
+
+            .returning();
+
+          if (parentDoc.personalInfo) {
+            const { id, docId, ...pi } = parentDoc.personalInfo;
+            await trx.insert(personalInfoTable).values({
+              ...pi,
+              docId: insertedDoc.id,
+            });
+          }
+
+          if (parentDoc.experiences?.length) {
+            for (const exp of parentDoc.experiences) {
+              const { id, docId, ...e } = exp;
+              await trx.insert(experienceTable).values({
+                ...e,
+                docId: insertedDoc.id,
+              });
+            }
+          }
+
+          if (parentDoc.educations?.length) {
+            for (const edu of parentDoc.educations) {
+              const { id, docId, ...ed } = edu;
+              await trx.insert(educationTable).values({
+                ...ed,
+                docId: insertedDoc.id,
+              });
+            }
+          }
+
+          if (parentDoc.skills?.length) {
+            for (const skill of parentDoc.skills) {
+              const { id, docId, ...s } = skill;
+              await trx.insert(skillsTable).values({
+                ...s,
+                docId: insertedDoc.id,
+              });
+            }
+          }
+
+          return [insertedDoc];
+        });
+
+        return c.json({
+          success: true,
+          data: newDoc,
+        });
+      } catch (error) {
+        console.error("Branch Error:", error);
+        return c.json({ error: "Failed to branch document" }, 500);
+      }
+    }
+  )
   .get("/trash/all", getAuthUser, async (c) => {
+
 
     try {
       const user = c.get("user");

@@ -48,7 +48,7 @@ const ResumePreview = () => {
         ref={previewRef}
         className={cn(`
         shadow-lg bg-white w-full flex-[1.02]
-        h-full p-10 !font-open-sans
+        h-full p-4 md:p-10 !font-open-sans
         dark:border dark:bg-card 
         dark:border-b-gray-800 
         dark:border-x-gray-800

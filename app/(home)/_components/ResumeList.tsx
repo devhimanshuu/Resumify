@@ -70,7 +70,10 @@ const ResumeList = () => {
               updatedAt={resume.updatedAt}
               themeColor={resume.themeColor}
               thumbnail={resume.thumbnail}
+              parentId={resume.parentId}
+              branchName={resume.branchName}
             />
+
           ))}
         </>
       )}
