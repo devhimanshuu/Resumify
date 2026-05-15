@@ -74,9 +74,19 @@ const config: Config = {
           "0%, 100%": { backgroundPosition: "0% 50%" },
           "50%": { backgroundPosition: "100% 50%" },
         },
+        "bounce-subtle": {
+          "0%, 100%": { transform: "translateY(-5%)", animationTimingFunction: "cubic-bezier(0.8,0,1,1)" },
+          "50%": { transform: "translateY(0)", animationTimingFunction: "cubic-bezier(0,0,0.2,1)" },
+        },
+        "spin-slow": {
+          "from": { transform: "rotate(0deg)" },
+          "to": { transform: "rotate(360deg)" },
+        },
       },
       animation: {
         "sparkle": "sparkle 3s ease infinite",
+        "bounce-subtle": "bounce-subtle 2s infinite",
+        "spin-slow": "spin-slow 8s linear infinite",
       },
       maxWidth: {
         "8xl": "88rem",

@@ -1,7 +1,8 @@
-import React from "react";
+import React from "react"; // Rebuild trigger
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Header from "./_components/common/Header";
+import MobileCustomizer from "./_components/common/MobileCustomizer";
 
 const MainLayout = async ({
   children,
@@ -17,6 +18,7 @@ const MainLayout = async ({
     <div className="w-full h-auto min-h-screen bg-background">
       <Header />
       <main>{children}</main>
+      <MobileCustomizer />
     </div>
   );
 };

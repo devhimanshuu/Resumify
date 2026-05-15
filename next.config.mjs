@@ -1,6 +1,15 @@
 /** @type {import('next').NextConfig} */
 import dotenv from "dotenv";
 dotenv.config();
-const nextConfig = {};
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "img.clerk.com",
+      },
+    ],
+  },
+};
 
 export default nextConfig;
