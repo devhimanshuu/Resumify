@@ -46,7 +46,7 @@ const ExperienceForm = (props: { handleNext: () => void }) => {
       ...resumeInfo,
       experiences: cleanedList,
     });
-  }, [experienceList]);
+  }, [experienceList, onUpdate, resumeInfo]);
 
   const handleChange = (
     e: { target: { name: string; value: string } },
@@ -118,7 +118,7 @@ const ExperienceForm = (props: { handleNext: () => void }) => {
         }
       );
     },
-    [resumeInfo, experienceList]
+    [resumeInfo, experienceList, handleNext, mutateAsync]
   );
 
   return (

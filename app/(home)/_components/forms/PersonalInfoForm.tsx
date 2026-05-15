@@ -37,16 +37,14 @@ const PersonalInfoForm = (props: { handleNext: () => void }) => {
         ...(resumeInfo?.personalInfo || initialState),
       });
     }
-  }, [resumeInfo?.personalInfo]);
+  }, [resumeInfo, resumeInfo?.personalInfo]);
 
   const handleChange = useCallback(
     (e: { target: { name: string; value: string } }) => {
       const { name, value } = e.target;
 
-      setPersonalInfo({ ...personalInfo, [name]: value });
-
+      setPersonalInfo((prev) => ({ ...prev, [name]: value }));
       if (!resumeInfo) return;
-
       onUpdate({
         ...resumeInfo,
         personalInfo: {
@@ -56,7 +54,7 @@ const PersonalInfoForm = (props: { handleNext: () => void }) => {
       });
     },
     [resumeInfo, onUpdate]
-  );
+);
 
   const handleSubmit = useCallback(
     async (e: { preventDefault: () => void }) => {
@@ -90,7 +88,7 @@ const PersonalInfoForm = (props: { handleNext: () => void }) => {
         }
       );
     },
-    [resumeInfo, personalInfo]
+    [resumeInfo, personalInfo, handleNext, mutateAsync]
   );
 
   if (isLoading) {
