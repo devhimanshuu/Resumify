@@ -89,19 +89,30 @@ Resumify is architected for performance, scalability, and developer experience:
 
 ## 📂 Project Structure
 
-\`\`\`text
-├── app/                  # Next.js App Router (Pages, Layouts, API)
-│   ├── (auth)/           # Authentication flows (Clerk)
-│   ├── (home)/           # Protected dashboard and editor routes
-│   ├── (landingPage)/    # Public marketing site
-│   └── api/              # Hono RPC API endpoints
-├── components/           # Reusable UI components (Shadcn UI)
-├── context/              # React Context providers (Resume State)
-├── db/                   # Drizzle ORM schema and configuration
-├── features/             # Domain-specific logic and hooks
-├── lib/                  # Utility functions and API clients
-└── types/                # Global TypeScript definitions
-\`\`\`
+```text
+├── app/                        # Next.js 14 App Router
+│   ├── (auth)/                 # Clerk Authentication routes
+│   ├── (home)/                 # Main Application Workspace
+│   │   ├── dashboard/          # User Dashboard & Document Management
+│   │   ├── _components/        # Dashboard-specific UI & Forms
+│   │   └── layout.tsx          # Main layout with Header & Mobile Customizer
+│   ├── (landingPage)/          # Public Marketing & Hero section
+│   ├── (public)/               # Public Portfolio & Live Preview routes
+│   └── api/                    # Hono RPC Backend (Document, AI, ATS Engine)
+├── components/                 # Shared UI Component Library
+│   ├── preview/                # Resume Preview specific modules
+│   └── ui/                     # Core Shadcn UI components
+├── context/                    # Global State Management (Resume Context)
+├── db/                         # Database & Persistence Layer
+│   └── schema/                 # Drizzle ORM Table & Relation Definitions
+├── features/                   # Logic-heavy Domain Features
+│   ├── document/               # TanStack Query hooks for Document CRUD
+│   └── ai/                     # AI content generation logic
+├── hooks/                      # Global Custom React Hooks
+├── lib/                        # Core Utilities & External API Clients
+├── public/                     # Static Assets & Global Styles
+└── types/                      # Shared TypeScript Type Definitions
+```
 
 ## 🤝 Contributing
 
