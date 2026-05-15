@@ -1,70 +1,112 @@
-# Resumify — AI-Powered Resume Builder
+# 📄 Resumify: The AI-Powered Career Catalyst
 
-> Build stunning, ATS-optimized resumes in minutes with AI.
+![Next.js](https://img.shields.io/badge/Next.js-14.2-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)
+![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF?style=for-the-badge&logo=clerk)
+![Groq](https://img.shields.io/badge/Groq-AI-F55036?style=for-the-badge&logo=groq)
 
-## 🚀 Features
+Resumify is a cutting-edge, AI-driven resume builder engineered to help professionals craft stunning, ATS-optimized resumes in minutes. Built on a modern Next.js stack, it seamlessly blends real-time editing with powerful AI generation capabilities.
 
-- 🤖 **AI-Powered Content** — Generate professional summaries and bullet points with Groq AI
-- 🔐 **Secure Authentication** — Powered by Clerk (Google, GitHub, Email)
-- ✏️ **Real-Time Editor** — Live preview as you type
-- 🎨 **Custom Theme Colors** — Personalize your resume's look
-- 📄 **PDF Export** — Download high-quality PDFs
-- 🔗 **Shareable Links** — Share resumes with a unique URL
-- 🌓 **Dark Mode** — Beautiful light and dark themes
-- 📱 **Responsive** — Works on all devices
-- 🗑️ **Trash & Restore** — Safely archive and recover resumes
+---
 
-## 🛠 Tech Stack
+## ✨ Key Features
 
-- **Framework**: Next.js 14 (App Router)
+- **🧠 Advanced AI Generation**: Instantly generate tailored professional summaries, bullet points, and descriptions powered by Groq's blazing-fast inference engine.
+- **🎯 ATS Optimization & Matcher**: Analyze your resume against specific job descriptions to get real-time Match Scores and actionable improvement tips to beat Applicant Tracking Systems.
+- **⚡ Real-Time Live Preview**: Watch your resume take shape as you type. What you see is exactly what you get.
+- **🎨 Premium Customization**: Personalize your professional brand with custom theme colors, advanced typography, and a sleek dark mode interface.
+- **🖱️ Intuitive Drag & Drop**: Effortlessly reorder your experience, education, and skills sections using Framer Motion.
+- **📄 High-Fidelity PDF Export**: Generate pixel-perfect, ATS-readable PDFs using robust client-side rendering.
+- **🔗 Shareable Public Links**: Generate unique, secure links to share your dynamic web-based resume with recruiters instantly.
+- **🔒 Secure Authentication**: Enterprise-grade user authentication and session management powered by Clerk.
+
+## 🏗️ Architecture & Tech Stack
+
+Resumify is architected for performance, scalability, and developer experience:
+
+- **Frontend**: Next.js 14 (App Router), React 18, Tailwind CSS, Shadcn UI, Framer Motion
+- **Backend**: Next.js API Routes, Hono (RPC), TanStack React Query
+- **Database**: PostgreSQL (Neon DB), Drizzle ORM
+- **AI Integration**: Groq API (Llama 3 models)
+- **Document Processing**: jsPDF, html2canvas
 - **Authentication**: Clerk
-- **AI**: Groq (Llama 3.3 70B)
-- **Database**: Vercel Postgres + Drizzle ORM
-- **API**: Hono + Tanstack React Query
-- **Styling**: Tailwind CSS + Shadcn UI
-- **PDF**: jsPDF + html2canvas
 
-## 📦 Getting Started
+## 🚀 Getting Started
 
-```bash
-# Install dependencies
-npm install
+### Prerequisites
+- Node.js (v18+)
+- npm or yarn
+- A PostgreSQL Database (e.g., Neon or Vercel Postgres)
+- API Keys for Clerk and Groq
 
-# Set up environment variables
-cp .env.example .env
+### Installation
 
-# Push database schema
-npm run db:push
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/AI-Resumes-Builder.git
+   cd AI-Resumes-Builder
+   ```
 
-# Start development server
-npm run dev
-```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-## 🔐 Environment Variables
+3. **Environment Setup**
+   Create a `.env` file in the root directory and add your credentials (refer to `.env.example`):
+   ```env
+   # Database
+   DATABASE_URL=your_postgres_connection_string
 
-```env
-DATABASE_URL=your_postgres_url
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
-CLERK_SECRET_KEY=your_clerk_secret
-GROQ_API_KEY=your_groq_key
-NEXT_PUBLIC_GROQ_API_KEY=your_groq_key
-```
+   # Clerk Authentication
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+   CLERK_SECRET_KEY=your_clerk_secret_key
+   NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+   NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+   NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+   NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 
-## 📁 Project Structure
+   # AI Integration
+   GROQ_API_KEY=your_groq_api_key
+   NEXT_PUBLIC_GROQ_API_KEY=your_groq_api_key
 
-```
-├── app/
-│   ├── (home)/          # Authenticated routes
-│   ├── (landingPage)/   # Public landing page
-│   ├── (public)/        # Public resume views
-│   └── api/             # API routes (Hono)
-├── components/          # Shared UI components
-├── db/                  # Database schema & config
-├── features/            # Feature-specific hooks
-├── lib/                 # Utilities & AI model
-└── types/               # TypeScript types
-```
+   # App URL
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+   ```
+
+4. **Initialize Database**
+   Push the schema to your database:
+   ```bash
+   npm run db:push
+   ```
+
+5. **Start Development Server**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) to view the application.
+
+## 📂 Project Structure
+
+\`\`\`text
+├── app/                  # Next.js App Router (Pages, Layouts, API)
+│   ├── (auth)/           # Authentication flows (Clerk)
+│   ├── (home)/           # Protected dashboard and editor routes
+│   ├── (landingPage)/    # Public marketing site
+│   └── api/              # Hono RPC API endpoints
+├── components/           # Reusable UI components (Shadcn UI)
+├── context/              # React Context providers (Resume State)
+├── db/                   # Drizzle ORM schema and configuration
+├── features/             # Domain-specific logic and hooks
+├── lib/                  # Utility functions and API clients
+└── types/                # Global TypeScript definitions
+\`\`\`
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
 ## 📄 License
 
-MIT © Resumify
+This project is licensed under the MIT License.

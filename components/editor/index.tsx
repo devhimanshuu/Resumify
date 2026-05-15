@@ -28,8 +28,8 @@ const PROMPT = `Given the job title "{jobTitle}",
      list.`;
 
 const REWRITE_PROMPTS = {
-  metric: `Rewrite the following resume bullet point to make it metric-driven. Add placeholders like [X]% or $Y for numbers/percentages if none exist. Make it sound highly professional and impactful. Only return the rewritten text, no quotes or explanations:\n\n`,
-  executive: `Rewrite the following resume bullet point using executive power verbs (e.g., orchestrated, spearheaded, drove). Make it sound highly professional and impactful. Only return the rewritten text, no quotes or explanations:\n\n`,
+  quantify: `Rewrite the following resume bullet point to quantify the achievement. Add placeholders like [X]% or $Y for numbers/percentages if none exist. Make it sound highly professional and impactful. Only return the rewritten text, no quotes or explanations:\n\n`,
+  professional: `Rewrite the following resume bullet point to make it sound more professional. Use executive power verbs (e.g., orchestrated, spearheaded, drove). Make it sound highly professional and impactful. Only return the rewritten text, no quotes or explanations:\n\n`,
   shorten: `Rewrite the following resume bullet point to be extremely concise for ATS brevity. Remove fluff and keep the core impact. Only return the rewritten text, no quotes or explanations:\n\n`,
 };
 
@@ -101,7 +101,7 @@ const RichTextEditor = (props: {
     }
   };
 
-  const handleRewrite = async (type: "metric" | "executive" | "shorten") => {
+  const handleRewrite = async (type: "quantify" | "professional" | "shorten") => {
     if (!selectedText || !selectionRange) return;
     setLoadingRewrite(true);
     try {
@@ -210,20 +210,20 @@ const RichTextEditor = (props: {
                 <Button
                   size="sm"
                   variant="ghost"
-                  onClick={() => handleRewrite("metric")}
+                  onClick={() => handleRewrite("professional")}
                   className="h-8 text-[11px] px-2.5 font-semibold hover:bg-purple-500/10 hover:text-purple-600"
                 >
-                  <TrendingUp className="w-3 h-3 mr-1" />
-                  Metric-Driven
+                  <Briefcase className="w-3 h-3 mr-1" />
+                  Make it sound more professional
                 </Button>
                 <Button
                   size="sm"
                   variant="ghost"
-                  onClick={() => handleRewrite("executive")}
+                  onClick={() => handleRewrite("quantify")}
                   className="h-8 text-[11px] px-2.5 font-semibold hover:bg-purple-500/10 hover:text-purple-600"
                 >
-                  <Briefcase className="w-3 h-3 mr-1" />
-                  Executive
+                  <TrendingUp className="w-3 h-3 mr-1" />
+                  Quantify this achievement
                 </Button>
                 <Button
                   size="sm"

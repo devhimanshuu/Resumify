@@ -1,7 +1,15 @@
 import React, { FC, useCallback, useMemo } from "react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
-import { Dot, EllipsisVertical, FileText, Globe, Lock } from "lucide-react";
+import {
+  Dot,
+  EllipsisVertical,
+  FileText,
+  Globe,
+  Lock,
+  Calendar,
+  ArrowUpRight,
+} from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
@@ -36,80 +44,112 @@ const ResumeItem: FC<PropType> = ({
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ y: -4 }}
       whileTap={{ scale: 0.98 }}
       role="button"
       className="
-        cursor-pointer w-full
-        rounded-3xl transition-all duration-300
-        border border-border/50
-        hover:border-indigo-500/40
-        hover:shadow-xl hover:shadow-indigo-500/10
+        group cursor-pointer w-full
+        rounded-xl transition-all duration-300
+        border border-border/40
+        hover:border-border/80
+        hover:shadow-xl hover:shadow-black/[0.04]
+        dark:hover:shadow-black/[0.15]
         overflow-hidden
-        bg-card hover:bg-card/80
+        bg-card/60 hover:bg-card
+        backdrop-blur-sm
       "
       onClick={gotoDoc}
     >
       {/* Thumbnail */}
-      <div className="w-full h-[160px] bg-muted/30 relative overflow-hidden group">
+      <div className="w-full h-[170px] relative overflow-hidden bg-muted/20">
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-card/60 via-transparent to-transparent z-[1] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
         {thumbnail ? (
           <Image
             fill
             src={thumbnail}
             alt={title}
-            className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover object-top group-hover:scale-[1.03] transition-transform duration-700 ease-out"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500/5 to-purple-500/5 group-hover:scale-105 transition-transform duration-500">
-            <FileText size="32px" className="text-muted-foreground/40 group-hover:text-indigo-500/40 transition-colors" />
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted/30 to-muted/10">
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-xl bg-muted/40 flex items-center justify-center group-hover:bg-muted/60 transition-colors">
+                <FileText
+                  size="22px"
+                  className="text-muted-foreground/30 group-hover:text-muted-foreground/50 transition-colors"
+                />
+              </div>
+            </div>
           </div>
         )}
-        {/* Status badge overlay */}
-        <div className="absolute top-3 right-3">
+
+        {/* Status badge */}
+        <div className="absolute top-3 right-3 z-[2]">
           <div
             className={`
-              flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold tracking-wide
-              ${status === "public"
-                ? "bg-green-500/90 text-white shadow-sm shadow-green-500/20"
-                : "bg-background/80 backdrop-blur-sm text-muted-foreground border border-border/50"
+              flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold tracking-wider uppercase
+              backdrop-blur-md
+              ${
+                status === "public"
+                  ? "bg-emerald-500/90 text-white shadow-sm shadow-emerald-500/30"
+                  : "bg-background/70 text-muted-foreground border border-border/40"
               }
             `}
           >
             {status === "public" ? (
               <>
-                <Globe size="12px" />
+                <Globe size="10px" />
                 Public
               </>
             ) : (
               <>
-                <Lock size="12px" />
+                <Lock size="10px" />
                 Private
               </>
             )}
           </div>
         </div>
+
+        {/* Hover action indicator */}
+        <div className="absolute bottom-3 right-3 z-[2] opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
+          <div className="w-7 h-7 rounded-lg bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+            <ArrowUpRight size={14} className="text-white" />
+          </div>
+        </div>
+
         {/* Theme color accent */}
         {themeColor && (
           <div
-            className="absolute bottom-0 left-0 right-0 h-1 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]"
-            style={{ backgroundColor: themeColor, boxShadow: `0 -4px 12px ${themeColor}40` }}
+            className="absolute bottom-0 left-0 right-0 h-0.5 z-[2]"
+            style={{
+              backgroundColor: themeColor,
+              boxShadow: `0 -4px 16px ${themeColor}50`,
+            }}
           />
         )}
       </div>
 
       {/* Info */}
-      <div className="p-4 pt-3">
+      <div className="p-4 pt-3.5">
         <div className="flex items-center justify-between">
-          <h5 className="font-semibold text-sm truncate block w-full pr-2 text-foreground">
+          <h5 className="font-semibold text-sm truncate block w-full pr-2 text-foreground group-hover:text-foreground/90 transition-colors">
             {title}
           </h5>
-          <button className="text-muted-foreground hover:text-indigo-500 transition-colors shrink-0">
-            <EllipsisVertical size="18px" />
+          <button
+            className="text-muted-foreground/40 hover:text-foreground transition-colors shrink-0 p-0.5 rounded-md hover:bg-muted/50"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <EllipsisVertical size="16px" />
           </button>
         </div>
-        <p className="text-xs text-muted-foreground mt-1.5 font-medium">
-          {docDate}
-        </p>
+        <div className="flex items-center gap-1.5 mt-2">
+          <Calendar size={10} className="text-muted-foreground/50" />
+          <p className="text-[11px] text-muted-foreground/70 font-medium">
+            {docDate}
+          </p>
+        </div>
       </div>
     </motion.div>
   );

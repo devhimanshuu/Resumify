@@ -12,7 +12,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Target, Loader2, CheckCircle, AlertTriangle, Lightbulb } from "lucide-react";
+import { Target, Loader2, CheckCircle, AlertTriangle, Lightbulb, Link as LinkIcon, FileText } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 
 interface AtsResult {
@@ -25,17 +26,53 @@ const AtsMatcher = () => {
   const { resumeInfo } = useResumeContext();
   const [open, setOpen] = useState(false);
   const [jobDescription, setJobDescription] = useState("");
+  const [jobUrl, setJobUrl] = useState("");
+  const [inputType, setInputType] = useState<"text" | "url">("text");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AtsResult | null>(null);
 
   const handleMatch = async () => {
-    if (!jobDescription.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a job description.",
-        variant: "destructive",
-      });
-      return;
+    let textToAnalyze = jobDescription;
+
+    if (inputType === "url") {
+      if (!jobUrl.trim()) {
+        toast({
+          title: "Error",
+          description: "Please enter a job description URL.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setLoading(true);
+      try {
+        const response = await fetch("/api/fetch-job", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: jobUrl.trim() }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch URL");
+        }
+        const data = await response.json();
+        textToAnalyze = data.text;
+      } catch (err) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch job description from URL. Please try pasting the text instead.",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+    } else {
+      if (!jobDescription.trim()) {
+        toast({
+          title: "Error",
+          description: "Please enter a job description.",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     setLoading(true);
@@ -45,7 +82,8 @@ const AtsMatcher = () => {
         Review the following Resume Data and the Job Description.
         
         Calculate an ATS match score (0-100) based on how well the resume matches the job description.
-        Identify key missing keywords from the resume that are present in the job description.
+        Identify key missing industry keywords from the job description that are not in the resume.
+        For each missing keyword, suggest EXACTLY where to seamlessly integrate them into their experience points (e.g., "Add 'Agile' to your Software Engineer role at Company X").
         Provide 2-3 specific suggestions to improve the resume for this job.
         
         Respond ONLY with a valid JSON object in the following format:
@@ -59,7 +97,7 @@ const AtsMatcher = () => {
         ${JSON.stringify(resumeInfo)}
 
         Job Description:
-        ${jobDescription}
+        ${textToAnalyze}
       `;
 
       const aiResponse = await AIChatSession.sendMessage(prompt);
@@ -110,26 +148,70 @@ const AtsMatcher = () => {
             ATS Optimization Score
           </DialogTitle>
           <DialogDescription>
-            Paste the job description below to see how well your resume matches and get actionable tips.
+            Paste a job description or URL below to see how well your resume matches and get actionable tips.
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-          <div className="flex flex-col gap-4">
-            <div>
-              <label className="text-sm font-medium mb-1.5 block">
-                Job Description
-              </label>
-              <Textarea
-                placeholder="Paste the job description here..."
-                value={jobDescription}
-                onChange={(e) => setJobDescription(e.target.value)}
-                className="min-h-[250px] resize-none"
-              />
+          <div className="flex flex-col gap-5">
+            <div className="flex p-1 bg-muted/50 rounded-xl w-full">
+              <Button
+                variant={inputType === "text" ? "secondary" : "ghost"}
+                size="sm"
+                className={`flex-1 gap-2 rounded-lg transition-all ${inputType === "text" ? "shadow-sm bg-background" : ""}`}
+                onClick={() => setInputType("text")}
+              >
+                <FileText size={14} />
+                Paste Text
+              </Button>
+              <Button
+                variant={inputType === "url" ? "secondary" : "ghost"}
+                size="sm"
+                className={`flex-1 gap-2 rounded-lg transition-all ${inputType === "url" ? "shadow-sm bg-background" : ""}`}
+                onClick={() => setInputType("url")}
+              >
+                <LinkIcon size={14} />
+                Use Link
+              </Button>
             </div>
+
+            {inputType === "text" ? (
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-foreground/80 flex items-center gap-2">
+                  <FileText size={14} className="text-indigo-500" />
+                  Job Description Text
+                </label>
+                <Textarea
+                  placeholder="Paste the full job description text here..."
+                  value={jobDescription}
+                  onChange={(e) => setJobDescription(e.target.value)}
+                  className="min-h-[300px] resize-none bg-muted/20 border-border/50 focus:border-indigo-500/50 transition-all rounded-xl"
+                />
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-foreground/80 flex items-center gap-2">
+                  <LinkIcon size={14} className="text-indigo-500" />
+                  Job Description URL
+                </label>
+                <Input
+                  placeholder="e.g. https://www.linkedin.com/jobs/view/..."
+                  value={jobUrl}
+                  onChange={(e) => setJobUrl(e.target.value)}
+                  className="bg-muted/20 border-border/50 focus:border-indigo-500/50 transition-all rounded-xl h-11"
+                />
+                <div className="p-3 rounded-lg bg-indigo-500/5 border border-indigo-500/10 mt-4">
+                  <p className="text-[11px] text-indigo-600 dark:text-indigo-400 leading-relaxed flex gap-2">
+                    <Lightbulb size={14} className="shrink-0" />
+                    Note: Our AI will attempt to extract requirements from the link. If it fails due to site protections, please switch to 'Paste Text'.
+                  </p>
+                </div>
+              </div>
+            )}
+            
             <Button
               onClick={handleMatch}
-              disabled={loading || !jobDescription.trim()}
+              disabled={loading || (inputType === "text" ? !jobDescription.trim() : !jobUrl.trim())}
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
             >
               {loading ? (
