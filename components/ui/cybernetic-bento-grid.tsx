@@ -178,11 +178,13 @@ export const CyberneticBentoGrid = () => {
               <Trophy size={120} className="text-rose-500" />
             </div>
             <div className="relative z-10 space-y-3">
-              <div className="bg-background/80 backdrop-blur p-3 rounded-lg border border-border shadow-sm self-start max-w-[80%] text-xs border-rose-500/30">
-                "Tell me about a time you had to optimize a complex system."
+              <div className="bg-background/80 backdrop-blur p-3 rounded-lg border  shadow-sm self-start max-w-[80%] text-xs border-rose-500/30">
+                &quot;Tell me about a time you had to optimize a complex
+                system.&quot;
               </div>
               <div className="bg-rose-500 text-white p-3 rounded-lg shadow-sm self-end max-w-[80%] text-xs ml-auto">
-                "In my last role, I refactored the database queries..."
+                &quot;In my last role, I refactored the database
+                queries...&quot;
               </div>
             </div>
           </div>

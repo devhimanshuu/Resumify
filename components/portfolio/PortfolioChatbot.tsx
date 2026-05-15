@@ -166,7 +166,7 @@ const PortfolioChatbot = ({ resumeInfo }: { resumeInfo: any }) => {
                     <Sparkles size={16} />
                     <h4 className="font-bold text-sm">Interested in hiring?</h4>
                   </div>
-                  <p className="text-[10px] leading-relaxed opacity-90">Leave your details and I'll make sure {resumeInfo?.personalInfo?.firstName} sees them!</p>
+                  <p className="text-[10px] leading-relaxed opacity-90">Leave your details and I&apos;ll make sure {resumeInfo?.personalInfo?.firstName} sees them!</p>
                   <form onSubmit={submitLead} className="space-y-2">
                     <div className="relative">
                       <Mail size={12} className="absolute left-3 top-3 opacity-50" />
