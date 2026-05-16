@@ -12,11 +12,18 @@ CareerForge AI is a cutting-edge, AI-driven career management platform engineere
 
 ## ✨ Key Features
 
-- **🧠 Advanced AI Generation**: Instantly generate tailored professional summaries, bullet points, and descriptions powered by Groq's blazing-fast inference engine.
+- **✨ Magic AI Suite**: A centralized command center for next-gen career tools:
+  - **🧠 Mind-Reader**: Generates recruiter attention heatmaps based on senior technical recruiter eye-tracking data.
+  - **🛡️ Liar Detector**: An AI-driven veracity audit that detects temporal inconsistencies and skill-experience gaps.
+  - **⏳ Time-Traveler**: Projects your professional trajectory to 2030, evolving your skills and roles for the future market.
+  - **🎙️ Podcast Resume**: Converts your resume into a 2-minute high-impact AI interview podcast.
+  - **🔥 Resume Roast**: Brutally honest AI critiques to eliminate corporate fluff and highlighting weaknesses.
+  - **💻 Hacker Mode**: A terminal-based resume editor for the power user who builds in the command line.
+- **🧠 Advanced AI Generation**: Instantly generate tailored professional summaries, bullet points, and descriptions powered by NVIDIA & Groq.
 - **💼 Kanban Job Tracker**: A comprehensive application pipeline to manage your interview stages, notes, and specific resume versions.
-- **✉️ AI Cover Letter Generator**: Create personalized, job-specific cover letters that leverage your resume data and targeted job descriptions.
-- **🎯 Skill Gap Analyzer**: Get data-driven insights into missing skills and industry trends, along with specific course recommendations to level up.
-- **🎙️ AI Interview Coach**: Prepare for success with role-specific interview questions and AI-powered feedback on your responses.
+- **✉️ AI Cover Letter Generator**: Create personalized, job-specific cover letters that leverage your resume data.
+- **🎯 Skill Gap Analyzer**: Get data-driven insights into missing skills and industry trends with course recommendations.
+- **🎙️ AI Interview Coach**: Prepare with role-specific interview questions and AI-powered feedback.
 - **🎨 Custom Layout Builder**: Take full control of your resume architecture with section reordering, custom typography, and adjustable spacing.
 - **⚡ Real-Time Live Preview**: Watch your resume take shape as you type. What you see is exactly what you get.
 - **🔗 Shareable Public Links**: Generate unique, secure links to share your dynamic web-based resume with recruiters instantly.

@@ -81,7 +81,41 @@ const aiRoute = new Hono()
     } catch (error: any) {
       return c.json({ error: error.message }, 500);
     }
+  })
+
+  .post("/fact-check", getAuthUser, async (c) => {
+    try {
+      const { resumeData } = await c.req.json();
+      const prompt = `
+        You are an elite AI Auditor and Technical Recruiter. Your task is to perform a "Liar Detection" audit on the following resume.
+        Identify internal inconsistencies, temporal overlaps (dates), and "Skill vs Experience" gaps (skills listed but never mentioned in work history).
+        
+        RESUME DATA:
+        ${JSON.stringify(resumeData)}
+        
+        OUTPUT FORMAT (JSON):
+        {
+          "veracityScore": 0-100,
+          "trustLevel": "High" | "Moderate" | "Low",
+          "findings": [
+            { "type": "Temporal Inconsistency" | "Skill Gap" | "Logical Error", "detail": "Description...", "severity": "Critical" | "Warning" | "Informational" }
+          ],
+          "verdict": "A summary of the overall credibility."
+        }
+      `;
+
+      const response = await nvidiaClient.chat.completions.create({
+        model: "moonshotai/kimi-k2.6",
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" }
+      });
+
+      return c.json(JSON.parse(response.choices[0].message.content || "{}"));
+    } catch (error: any) {
+      return c.json({ error: error.message }, 500);
+    }
   });
+
 
 
 export default aiRoute;

@@ -8,6 +8,9 @@ import {
   BarChart3,
   Briefcase,
   LayoutDashboard,
+  Mic,
+  Globe,
+  Map,
 } from "lucide-react";
 import { UserButton, useUser } from "@clerk/nextjs";
 import {
@@ -31,6 +34,21 @@ const navItems = [
     href: "/dashboard/applications",
     label: "Job Tracker",
     icon: Briefcase,
+  },
+  {
+    href: "/dashboard/interview",
+    label: "Interview Lab",
+    icon: Mic,
+  },
+  {
+    href: "/dashboard/market",
+    label: "Market Data",
+    icon: Globe,
+  },
+  {
+    href: "/dashboard/roadmap",
+    label: "Roadmap",
+    icon: Map,
   },
   {
     href: "/dashboard/analytics",

@@ -190,49 +190,49 @@ export const CyberneticBentoGrid = () => {
           </div>
         </BentoItem>
 
-        {/* Custom Themes */}
+        {/* Mind-Reader Heatmap */}
         <BentoItem>
           <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4 border border-purple-500/20">
-            <Palette className="text-purple-500" size="20px" />
+            <Sparkles className="text-purple-500" size="20px" />
           </div>
-          <h2 className="text-xl font-bold">Custom Themes</h2>
+          <h2 className="text-xl font-bold">Mind-Reader</h2>
           <p className="mt-2 text-muted-foreground text-sm">
-            Personalize your resume with a curated palette of professional color
-            themes that stand out.
+            Recruiter attention heatmaps that predict exactly where hiring managers will look first.
           </p>
         </BentoItem>
-
-        {/* Shareable Links */}
+ 
+        {/* Liar Detector Audit */}
         <BentoItem>
           <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4 border border-emerald-500/20">
-            <Share2 className="text-emerald-500" size="20px" />
+            <Shield className="text-emerald-500" size="20px" />
           </div>
-          <h2 className="text-xl font-bold">Live Sharing</h2>
+          <h2 className="text-xl font-bold">Liar Detector</h2>
           <p className="mt-2 text-muted-foreground text-sm">
-            Create a unique web link for your resume. Perfect for portfolios and
-            cold emails.
+            AI-driven veracity audit that detects temporal inconsistencies and skill-experience gaps.
           </p>
         </BentoItem>
-
+ 
         {/* Skill Gap */}
         <BentoItem className="md:col-span-2">
           <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center mb-4 border border-yellow-500/20">
             <Target className="text-yellow-500" size="20px" />
           </div>
-          <h2 className="text-xl font-bold">Skill Gap Analyzer</h2>
+          <h2 className="text-xl font-bold">Magic AI Suite</h2>
           <p className="mt-2 text-muted-foreground text-sm">
-            Compare your current profile against a target job description to
-            identify missing keywords and skills instantly.
+            A centralized hub for next-gen career tools including Time-Traveler projections, Podcast Resume conversion, and Hacker Mode editing.
           </p>
           <div className="mt-4 flex gap-2 flex-wrap">
-            <span className="px-2 py-1 rounded-md bg-green-500/10 text-[10px] font-medium text-green-500 border border-green-500/20">
-              React: Match
+            <span className="px-2 py-1 rounded-md bg-indigo-500/10 text-[10px] font-medium text-indigo-500 border border-indigo-500/20">
+              Time-Traveler
             </span>
-            <span className="px-2 py-1 rounded-md bg-green-500/10 text-[10px] font-medium text-green-500 border border-green-500/20">
-              TypeScript: Match
+            <span className="px-2 py-1 rounded-md bg-purple-500/10 text-[10px] font-medium text-purple-500 border border-purple-500/20">
+              Mind-Reader
             </span>
-            <span className="px-2 py-1 rounded-md bg-red-500/10 text-[10px] font-medium text-red-500 border border-red-500/20">
-              GraphQL: Missing
+            <span className="px-2 py-1 rounded-md bg-emerald-500/10 text-[10px] font-medium text-emerald-500 border border-emerald-500/20">
+              Liar Detector
+            </span>
+             <span className="px-2 py-1 rounded-md bg-amber-500/10 text-[10px] font-medium text-amber-500 border border-amber-500/20">
+              Podcast Mode
             </span>
           </div>
         </BentoItem>
