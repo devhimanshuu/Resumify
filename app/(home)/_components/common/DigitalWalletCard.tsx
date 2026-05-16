@@ -114,7 +114,7 @@ const DigitalWalletCard = () => {
                         <span className="text-[9px] font-black uppercase tracking-widest text-indigo-400">NFC Enabled</span>
                     </div>
                     <p className="text-[10px] text-slate-500 leading-relaxed italic">
-                        "Your resume is now instant. Share your contact info and full digital portfolio with a single tap at events."
+                        &quot;Your resume is now instant. Share your contact info and full digital portfolio with a single tap at events.&quot;
                     </p>
                 </div>
             </div>

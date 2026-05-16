@@ -103,7 +103,7 @@ const PodcastResume = () => {
                         <Sparkles size={14} className="text-amber-400" />
                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-400/70">Career Forge FM</h3>
                     </div>
-                    <h4 className="text-lg font-black text-white italic tracking-tight">The {resumeInfo?.personalInfo?.firstName}'s Spotlight</h4>
+                    <h4 className="text-lg font-black text-white italic tracking-tight">The {resumeInfo?.personalInfo?.firstName}&apos;s Spotlight</h4>
                 </div>
 
                 <div className="w-full space-y-4">

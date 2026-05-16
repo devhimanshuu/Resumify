@@ -114,7 +114,7 @@ const InterviewCheatSheet = () => {
                                 Company Culture
                             </div>
                             <p className="text-sm text-slate-300 leading-relaxed italic">
-                                "{cheatSheet.companyCulture}"
+                                &quot;{cheatSheet.companyCulture}&quot;
                             </p>
                         </div>
                         <div className="space-y-3">
@@ -123,7 +123,7 @@ const InterviewCheatSheet = () => {
                                 Technical Focus
                             </div>
                             <p className="text-sm text-slate-300 leading-relaxed italic">
-                                "{cheatSheet.technicalFocus}"
+                                &quot;{cheatSheet.technicalFocus}&quot;
                             </p>
                         </div>
                     </div>
@@ -169,7 +169,7 @@ const InterviewCheatSheet = () => {
                     <div className="flex items-center gap-3 p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/10">
                         <Sparkles size={16} className="text-indigo-400 shrink-0" />
                         <p className="text-[9px] text-indigo-300 italic leading-relaxed">
-                            "Focus on your {resumeInfo?.skills?.[0]?.name || "core technical"} experience. They value scale and architectural foresight."
+                            &quot;Focus on your {resumeInfo?.skills?.[0]?.name || "core technical"} experience. They value scale and architectural foresight.&quot;
                         </p>
                     </div>
                 </div>
