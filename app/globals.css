@@ -73,8 +73,8 @@ body {
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
 }
 
 @keyframes fade-up {
@@ -162,9 +162,25 @@ body {
   animation: pulse-glow 3s ease-in-out infinite;
 }
 
-.animate-shimmer {
-  background-size: 200% 100%;
-  animation: shimmer 2s linear infinite;
+.shimmer-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer 3s infinite;
 }
 
 .animate-fade-up {
@@ -292,7 +308,7 @@ body {
 /* ===== Design System Tokens ===== */
 @layer base {
   :root {
-    --background: 0 0% 99%;
+    --background: 210 40% 98%;
     --foreground: 222 47% 11%;
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
@@ -300,16 +316,16 @@ body {
     --popover-foreground: 222 47% 11%;
     --primary: 239 84% 67%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 5% 96%;
+    --secondary: 210 40% 96%;
     --secondary-foreground: 222 47% 11%;
-    --muted: 240 5% 96%;
+    --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
-    --accent: 240 5% 96%;
+    --accent: 210 40% 96%;
     --accent-foreground: 222 47% 11%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
     --ring: 239 84% 67%;
     --radius: 0.75rem;
     --chart-1: 239 84% 67%;
@@ -360,5 +376,12 @@ body {
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    background-image: radial-gradient(at 0% 0%, hsla(210, 40%, 96%, 1) 0, transparent 50%), 
+                      radial-gradient(at 100% 100%, hsla(210, 40%, 94%, 1) 0, transparent 50%);
+    background-attachment: fixed;
+  }
+  .dark body {
+    background-image: none;
+    background-color: hsl(var(--background));
   }
 }

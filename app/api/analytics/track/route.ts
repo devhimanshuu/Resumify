@@ -1,37 +1,30 @@
 import { NextResponse } from "next/server";
-import { db } from "@/db";
-import { documentTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { z } from "zod";
+import { trackPortfolioEvent } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
+const trackSchema = z.object({
+  documentId: z.string().min(1),
+  type: z.enum(["view", "click", "download", "lead"]),
+  source: z.string().max(255).optional(),
+  durationSeconds: z.number().int().min(0).max(24 * 60 * 60).optional(),
+});
+
 export async function POST(request: Request) {
   try {
-    const { documentId, type } = await request.json();
-    if (!documentId || !type) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
+    const parsed = trackSchema.safeParse(await request.json());
+    if (!parsed.success) return NextResponse.json({ error: "Invalid tracking payload" }, { status: 400 });
 
-    const doc = await db.query.documentTable.findFirst({
-      where: eq(documentTable.documentId, documentId),
+    const aggregate = await trackPortfolioEvent({
+      documentId: parsed.data.documentId,
+      eventType: parsed.data.type,
+      headers: request.headers,
+      source: parsed.data.source,
+      durationSeconds: parsed.data.durationSeconds,
     });
 
-    if (!doc) {
-      return NextResponse.json({ error: "Document not found" }, { status: 404 });
-    }
-
-    if (type === "view") {
-      await db.update(documentTable)
-        .set({ 
-          views: (doc.views || 0) + 1,
-          uniqueVisitors: (doc.uniqueVisitors || 0) + (Math.random() > 0.3 ? 1 : 0) // rough estimation for demo
-        })
-        .where(eq(documentTable.documentId, documentId));
-    } else if (type === "click") {
-      await db.update(documentTable)
-        .set({ clickThroughs: (doc.clickThroughs || 0) + 1 })
-        .where(eq(documentTable.documentId, documentId));
-    }
+    if (!aggregate) return NextResponse.json({ error: "Document not found or private" }, { status: 404 });
 
     return NextResponse.json({ success: true });
   } catch (error) {

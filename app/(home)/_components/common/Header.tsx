@@ -57,17 +57,16 @@ const navItems = [
   },
 ];
 
-
 const Header = () => {
   const { setTheme } = useTheme();
   const { user, isLoaded } = useUser();
   const pathname = usePathname();
 
   return (
-    <header className="w-full sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl">
-      <div className="w-full mx-auto max-w-7xl 3xl:max-w-9xl 4xl:max-w-10xl py-0 px-5 flex items-center justify-between h-14">
+    <header className="sticky top-0 z-50 w-full border-b border-border/70 bg-background/90 backdrop-blur-xl supports-[backdrop-filter]:bg-background/75">
+      <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Left Section: Logo + Nav */}
-        <div className="flex items-center gap-8">
+        <div className="flex min-w-0 items-center gap-6">
           {/* Logo */}
           <Link
             href="/dashboard"
@@ -75,14 +74,14 @@ const Header = () => {
           >
             <div className="relative">
               <Image
-                src="/logo.svg"
+                src="/CareerForge_ai_final.png"
                 alt="CareerForge AI Logo"
-                width={28}
-                height={28}
-                className="group-hover:scale-105 transition-transform duration-300 rounded-lg"
+                width={32}
+                height={32}
+                className="group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_12px_rgba(99,102,241,0.4)]"
               />
             </div>
-            <span className="font-bold text-base tracking-tight bg-gradient-to-r from-indigo-500 to-violet-600 bg-clip-text text-transparent">
+            <span className="hidden font-display font-bold text-xl tracking-tight bg-gradient-to-r from-indigo-500 to-indigo-400 bg-clip-text text-transparent sm:block">
               CareerForge AI
             </span>
           </Link>
@@ -91,7 +90,7 @@ const Header = () => {
           <div className="hidden md:block w-px h-5 bg-border/60" />
 
           {/* Navigation */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden items-center gap-1 overflow-x-auto md:flex">
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
@@ -102,18 +101,18 @@ const Header = () => {
                   key={item.href}
                   href={item.href}
                   className={`
-                    relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200
+                    relative flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold transition-all duration-200
                     ${
                       isActive
-                        ? "text-foreground bg-muted/70"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                        ? "bg-foreground text-background shadow-sm"
+                        : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
                     }
                   `}
                 >
                   <Icon size={14} />
                   {item.label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[calc(50%+6px)] w-6 h-0.5 bg-indigo-500 rounded-full" />
+                    <span className="absolute -bottom-[13px] left-1/2 h-0.5 w-6 -translate-x-1/2 rounded-full bg-indigo-500" />
                   )}
                 </Link>
               );

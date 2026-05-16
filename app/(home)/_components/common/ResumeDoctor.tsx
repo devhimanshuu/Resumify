@@ -191,7 +191,7 @@ const ResumeDoctor = () => {
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/10">
                     <Sparkles size={16} className="text-indigo-400 shrink-0" />
                     <p className="text-[9px] text-indigo-300 italic font-medium leading-relaxed">
-                        "Your current score is in the top 15% of candidates for Tech roles. Add quantifiable metrics to hit 95+."
+                        &quot;Your current score is in the top 15% of candidates for Tech roles. Add quantifiable metrics to hit 95+.&quot;
                     </p>
                 </div>
                 <Button className="w-full h-11 bg-indigo-600 hover:bg-indigo-500 font-bold uppercase tracking-widest text-[10px] rounded-xl shadow-lg shadow-indigo-500/20">

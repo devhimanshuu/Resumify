@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { getAuth } from "@clerk/nextjs/server";
 import { db } from "@/db";
-import { documentTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { analyticsEventTable, documentTable } from "@/db/schema";
+import { and, eq, gte, inArray, sql } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -16,15 +16,22 @@ export async function GET(request: Request) {
       .from(documentTable)
       .where(eq(documentTable.userId, userId));
 
-    let totalViews = 0;
-    let uniqueVisitors = 0;
-    let clickThroughs = 0;
+    const documentIds = userDocuments.map((doc) => doc.documentId);
+    const fourteenDaysAgo = new Date();
+    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 13);
+    fourteenDaysAgo.setHours(0, 0, 0, 0);
 
-    for (const doc of userDocuments) {
-      totalViews += doc.views || 0;
-      uniqueVisitors += doc.uniqueVisitors || 0;
-      clickThroughs += doc.clickThroughs || 0;
-    }
+    const [aggregate] = documentIds.length
+      ? await db
+          .select({
+            totalViews: sql<number>`count(*) filter (where ${analyticsEventTable.eventType} = 'view')::int`,
+            uniqueVisitors: sql<number>`count(distinct ${analyticsEventTable.visitorHash})::int`,
+            clickThroughs: sql<number>`count(*) filter (where ${analyticsEventTable.eventType} in ('click', 'download', 'lead'))::int`,
+            avgDuration: sql<number>`coalesce(avg(${analyticsEventTable.durationSeconds}) filter (where ${analyticsEventTable.durationSeconds} is not null), 0)::int`,
+          })
+          .from(analyticsEventTable)
+          .where(inArray(analyticsEventTable.documentId, documentIds))
+      : [{ totalViews: 0, uniqueVisitors: 0, clickThroughs: 0, avgDuration: 0 }];
 
     const branchMetrics = userDocuments.map(doc => ({
       title: doc.title,
@@ -35,19 +42,57 @@ export async function GET(request: Request) {
       documentId: doc.documentId
     })).sort((a, b) => b.views - a.views);
 
+    const viewsByDate = documentIds.length
+      ? await db
+          .select({
+            date: sql<string>`to_char(${analyticsEventTable.createdAt}, 'YYYY-MM-DD')`,
+            views: sql<number>`count(*)::int`,
+          })
+          .from(analyticsEventTable)
+          .where(
+            and(
+              inArray(analyticsEventTable.documentId, documentIds),
+              eq(analyticsEventTable.eventType, "view"),
+              gte(analyticsEventTable.createdAt, fourteenDaysAgo.toISOString())
+            )
+          )
+          .groupBy(sql`to_char(${analyticsEventTable.createdAt}, 'YYYY-MM-DD')`)
+      : [];
 
-    // Mock an avg read time based on views for now, or just hardcode a realistic one
-    const avgTime = "2m " + Math.floor(Math.random() * 60) + "s";
+    const trafficSources = documentIds.length
+      ? await db
+          .select({
+            label: sql<string>`coalesce(nullif(${analyticsEventTable.source}, ''), nullif(${analyticsEventTable.referrer}, ''), 'Direct')`,
+            count: sql<number>`count(*)::int`,
+          })
+          .from(analyticsEventTable)
+          .where(
+            and(
+              inArray(analyticsEventTable.documentId, documentIds),
+              eq(analyticsEventTable.eventType, "view")
+            )
+          )
+          .groupBy(sql`coalesce(nullif(${analyticsEventTable.source}, ''), nullif(${analyticsEventTable.referrer}, ''), 'Direct')`)
+          .orderBy(sql`count(*) desc`)
+          .limit(5)
+      : [];
+
+    const avgTime = formatDuration(aggregate?.avgDuration || 0);
+    const sourceTotal = trafficSources.reduce((sum, source) => sum + source.count, 0);
 
     return NextResponse.json({
       success: true,
       data: {
-        totalViews,
-        uniqueVisitors,
+        totalViews: aggregate?.totalViews || 0,
+        uniqueVisitors: aggregate?.uniqueVisitors || 0,
         avgTime,
-        clickThroughs,
-        viewsOverTime: generateViewsArray(totalViews),
+        clickThroughs: aggregate?.clickThroughs || 0,
+        viewsOverTime: buildViewsArray(viewsByDate, fourteenDaysAgo),
         branchMetrics,
+        trafficSources: trafficSources.map((source) => ({
+          label: normalizeSourceLabel(source.label),
+          percentage: sourceTotal ? Math.round((source.count / sourceTotal) * 100) : 0,
+        })),
       },
     });
 
@@ -57,17 +102,30 @@ export async function GET(request: Request) {
   }
 }
 
-// Simple helper to distribute total views over 14 days realistically
-function generateViewsArray(total: number) {
-  if (total === 0) return Array(14).fill(0);
-  const arr = Array(14).fill(0);
-  let remaining = total;
-  for (let i = 0; i < 13; i++) {
-    const val = Math.floor(Math.random() * (remaining / 3));
-    arr[i] = val;
-    remaining -= val;
+function buildViewsArray(rows: { date: string; views: number }[], startDate: Date) {
+  const byDate = new Map(rows.map((row) => [row.date, row.views]));
+  return Array.from({ length: 14 }, (_, index) => {
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + index);
+    return byDate.get(date.toISOString().slice(0, 10)) || 0;
+  });
+}
+
+function formatDuration(seconds: number) {
+  const safeSeconds = Math.max(0, Math.floor(seconds));
+  const minutes = Math.floor(safeSeconds / 60);
+  return `${minutes}m ${safeSeconds % 60}s`;
+}
+
+function normalizeSourceLabel(source: string) {
+  if (source === "public-portfolio") return "Portfolio Page";
+  if (source === "portfolio") return "Portfolio Download";
+  if (source === "Direct") return "Direct";
+
+  try {
+    const url = new URL(source);
+    return url.hostname.replace(/^www\./, "");
+  } catch {
+    return source;
   }
-  arr[13] = remaining; // Last day takes the rest
-  // Shuffle it a bit for realism
-  return arr.sort(() => Math.random() - 0.5);
 }

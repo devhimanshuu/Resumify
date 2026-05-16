@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { and, desc, eq, ne } from "drizzle-orm";
+import { and, desc, eq, ne, notInArray } from "drizzle-orm";
 import { z } from "zod";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import {
@@ -18,6 +18,7 @@ import {
   personalInfoTable,
   skillsTable,
 } from "@/db/schema";
+import { trackPortfolioEvent } from "@/lib/analytics";
 
 const documentRoute = new Hono()
   .post(
@@ -102,6 +103,23 @@ const documentRoute = new Hono()
           return c.json({ error: "DocumentId is required" }, 400);
         }
 
+        if (slug !== undefined && slug) {
+          const [slugOwner] = await db
+            .select()
+            .from(documentTable)
+            .where(
+              and(
+                eq(documentTable.slug, slug),
+                ne(documentTable.documentId, documentId)
+              )
+            )
+            .limit(1);
+
+          if (slugOwner) {
+            return c.json({ error: "Portfolio slug is already taken" }, 409);
+          }
+        }
+
         await db.transaction(async (trx) => {
           const [existingDocument] = await trx
             .select()
@@ -118,17 +136,16 @@ const documentRoute = new Hono()
           }
 
           const resumeUpdate: Record<string, any> = {};
-          if (title) resumeUpdate.title = title;
-          if (thumbnail) resumeUpdate.thumbnail = thumbnail;
-          if (summary) resumeUpdate.summary = summary;
-          if (themeColor) resumeUpdate.themeColor = themeColor;
-          if (status) resumeUpdate.status = status;
-          if (slug) resumeUpdate.slug = slug;
-          if (template) resumeUpdate.template = template;
-          if (settings) resumeUpdate.settings = settings;
-
-          if (currentPosition)
-            resumeUpdate.currentPosition = currentPosition || 1;
+          if (title !== undefined) resumeUpdate.title = title;
+          if (thumbnail !== undefined) resumeUpdate.thumbnail = thumbnail;
+          if (summary !== undefined) resumeUpdate.summary = summary;
+          if (themeColor !== undefined) resumeUpdate.themeColor = themeColor;
+          if (status !== undefined) resumeUpdate.status = status;
+          if (slug !== undefined) resumeUpdate.slug = slug;
+          if (template !== undefined) resumeUpdate.template = template;
+          if (settings !== undefined) resumeUpdate.settings = settings;
+          if (currentPosition !== undefined) resumeUpdate.currentPosition = currentPosition || 1;
+          if (Object.keys(resumeUpdate).length > 0) resumeUpdate.updatedAt = new Date().toISOString();
 
           if (Object.keys(resumeUpdate)?.length > 0) {
             await trx
@@ -177,6 +194,24 @@ const documentRoute = new Hono()
               existingExperience.map((exp) => exp.id)
             );
 
+            const incomingIds = experience
+              .map((exp) => exp.id)
+              .filter((id): id is number => typeof id === "number");
+            if (incomingIds.length > 0) {
+              await trx
+                .delete(experienceTable)
+                .where(
+                  and(
+                    eq(experienceTable.docId, existingDocument.id),
+                    notInArray(experienceTable.id, incomingIds)
+                  )
+                );
+            } else {
+              await trx
+                .delete(experienceTable)
+                .where(eq(experienceTable.docId, existingDocument.id));
+            }
+
             for (const exp of experience) {
               const { id, ...data } = exp;
               if (id !== undefined && existingExperienceMap.has(id)) {
@@ -208,6 +243,24 @@ const documentRoute = new Hono()
               existingEducation.map((edu) => edu.id)
             );
 
+            const incomingIds = education
+              .map((edu) => edu.id)
+              .filter((id): id is number => typeof id === "number");
+            if (incomingIds.length > 0) {
+              await trx
+                .delete(educationTable)
+                .where(
+                  and(
+                    eq(educationTable.docId, existingDocument.id),
+                    notInArray(educationTable.id, incomingIds)
+                  )
+                );
+            } else {
+              await trx
+                .delete(educationTable)
+                .where(eq(educationTable.docId, existingDocument.id));
+            }
+
             for (const edu of education) {
               const { id, ...data } = edu;
               if (id !== undefined && existingEducationMap.has(id)) {
@@ -238,6 +291,24 @@ const documentRoute = new Hono()
             const existingSkillsMap = new Set(
               existingskills.map((skill) => skill.id)
             );
+
+            const incomingIds = skills
+              .map((skill) => skill.id)
+              .filter((id): id is number => typeof id === "number");
+            if (incomingIds.length > 0) {
+              await trx
+                .delete(skillsTable)
+                .where(
+                  and(
+                    eq(skillsTable.docId, existingDocument.id),
+                    notInArray(skillsTable.id, incomingIds)
+                  )
+                );
+            } else {
+              await trx
+                .delete(skillsTable)
+                .where(eq(skillsTable.docId, existingDocument.id));
+            }
 
             for (const skill of skills) {
               const { id, ...data } = skill;
@@ -455,13 +526,12 @@ const documentRoute = new Hono()
           );
         }
 
-        // track view
-        await db.update(documentTable)
-          .set({ 
-            views: (documentData.views || 0) + 1,
-            uniqueVisitors: (documentData.uniqueVisitors || 0) + (Math.random() > 0.3 ? 1 : 0)
-          })
-          .where(eq(documentTable.id, documentData.id));
+        await trackPortfolioEvent({
+          documentId: documentData.documentId,
+          eventType: "view",
+          headers: c.req.raw.headers,
+          source: "public-portfolio",
+        });
 
         return c.json({
           success: true,

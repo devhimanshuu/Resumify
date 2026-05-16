@@ -1,7 +1,7 @@
 import React from "react";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import NavBar from "@/components/nav-bar";
+import { Header } from "@/components/ui/header-2";
 
 const LandingLayout = async ({
   children,
@@ -15,7 +15,7 @@ const LandingLayout = async ({
   }
   return (
     <div>
-      <NavBar />
+      <Header />
       {children}
     </div>
   );

@@ -44,21 +44,18 @@ const imageRoute = new Hono()
         console.warn("Primary NVIDIA Qwen error:", e);
       }
 
-      // 2. Fallback: Stable Diffusion XL or similar (NVIDIA)
-      // Note: If edit is not available, we could try to generate from scratch, 
-      // but for now let's use a high-quality professional placeholder as the ultimate "UX fallback"
-      // while we log the error for the developer.
-      
       if (!resultImage) {
-        console.info("Falling back to high-quality professional placeholder.");
-        // Use a high-quality Unsplash professional headshot as a safety fallback
-        resultImage = "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=256&h=256&auto=format&fit=crop";
+        return c.json({
+          success: false,
+          error: "AI image editing is temporarily unavailable. Please try again later.",
+          providerError: error,
+        }, 503);
       }
 
       return c.json({ 
         success: true, 
         image: resultImage,
-        isFallback: !resultImage.startsWith("data:image")
+        isFallback: false
       });
     } catch (error) {
       console.error(error);

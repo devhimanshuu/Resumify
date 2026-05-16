@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/context/theme-provider";
@@ -8,10 +8,16 @@ import QueryProvider from "@/context/query-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 
-const inter = Inter({
+const outfit = Outfit({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter",
+  variable: "--font-outfit",
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-plus-jakarta",
 });
 
 export const metadata: Metadata = {
@@ -33,7 +39,9 @@ export const metadata: Metadata = {
     type: "website",
   },
   icons: {
-    icon: "/logo.svg",
+    icon: "/CareerForge_ai_final.png",
+    shortcut: "/CareerForge_ai_final.png",
+    apple: "/CareerForge_ai_final.png",
   },
 };
 
@@ -45,18 +53,17 @@ export default function RootLayout({
   return (
     <ClerkProvider
       appearance={{
-        baseTheme: dark,
         variables: {
-          colorPrimary: "#6366F1",
+          colorPrimary: "#4F46E5",
         },
         elements: {
           footer: "hidden",
           userButtonPopoverFooter: "hidden",
-          logoBox: "flex items-center justify-center gap-2 after:content-['CareerForge_AI'] after:font-bold after:text-xl after:tracking-tight after:bg-gradient-to-r after:from-indigo-500 after:to-purple-600 after:bg-clip-text after:text-transparent",
+          logoBox: "flex items-center justify-center gap-2 after:content-['CareerForge_AI'] after:font-bold after:text-xl after:tracking-tight after:bg-gradient-to-r after:from-indigo-600 after:to-purple-600 after:bg-clip-text after:text-transparent",
           logoImage: "w-8 h-8 rounded-lg shadow-lg shadow-indigo-500/25",
         },
         layout: {
-          logoImageUrl: "/logo.svg",
+          logoImageUrl: "/CareerForge_ai_final.png",
           helpPageUrl: "https://clerk.com",
           logoPlacement: "inside",
           socialButtonsPlacement: "bottom",
@@ -68,14 +75,14 @@ export default function RootLayout({
         <body
           className={cn(
             "bg-background min-h-screen font-sans antialiased overflow-x-hidden",
-            inter.variable,
-            inter.className
+            outfit.variable,
+            plusJakartaSans.variable
           )}
         >
           <QueryProvider>
             <ThemeProvider
               attribute="class"
-              defaultTheme="dark"
+              defaultTheme="light"
               enableSystem
               disableTransitionOnChange
             >

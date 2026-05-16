@@ -11,7 +11,8 @@ interface ARPopOutViewerProps {
 
 const ARPopOutViewer = ({ data }: ARPopOutViewerProps) => {
   const [active, setActive] = useState(false);
-  const [orientation, setOrientation] = useState({ x: 0, y: 0 });
+  const topExperience = data.experiences?.[0];
+  const topSkills = (data.skills || []).slice(0, 3);
 
   // Motion values for simulated AR tilt
   const x = useMotionValue(0);
@@ -124,7 +125,7 @@ const ARPopOutViewer = ({ data }: ARPopOutViewerProps) => {
                             <Github size={16} className="text-white" />
                             <span className="text-[10px] font-black uppercase text-white/70 tracking-widest">Active Repo</span>
                         </div>
-                        <h4 className="text-sm font-bold text-white mb-1">Project Nova</h4>
+                        <h4 className="text-sm font-bold text-white mb-1">{topExperience?.companyName || "Featured Work"}</h4>
                         <div className="h-12 bg-white/10 rounded-lg flex items-end p-2 gap-1">
                             {[40, 70, 45, 90, 65, 80, 55].map((h, i) => (
                                 <motion.div 
@@ -151,8 +152,10 @@ const ARPopOutViewer = ({ data }: ARPopOutViewerProps) => {
                                 <Sparkles size={20} className="text-white/20" />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-[10px] font-bold text-white italic">"Absolute game changer..."</span>
-                                <span className="text-[8px] text-slate-500">- CTO at TechCorp</span>
+                                <span className="text-[10px] font-bold text-white italic">Portfolio highlight</span>
+                                <span className="text-[8px] text-slate-500">
+                                  {topExperience?.title || data.personalInfo?.jobTitle || "Professional Profile"}
+                                </span>
                             </div>
                         </div>
                     </motion.div>
@@ -167,14 +170,14 @@ const ARPopOutViewer = ({ data }: ARPopOutViewerProps) => {
                             <span className="text-[9px] font-black uppercase text-slate-500">Expertise</span>
                         </div>
                         <div className="space-y-2">
-                           {["React", "Next.js", "AI/ML"].map((skill) => (
-                               <div key={skill} className="space-y-1">
+                           {(topSkills.length ? topSkills : [{ name: "Leadership", rating: 5 }]).map((skill: any) => (
+                               <div key={skill.name} className="space-y-1">
                                    <div className="flex justify-between text-[8px] font-bold uppercase">
-                                       <span>{skill}</span>
-                                       <span>95%</span>
+                                       <span>{skill.name}</span>
+                                       <span>{Math.max(1, skill.rating || 5) * 20}%</span>
                                    </div>
                                    <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
-                                       <div className="h-full bg-indigo-500 w-[95%]" />
+                                       <div className="h-full bg-indigo-500" style={{ width: `${Math.max(1, skill.rating || 5) * 20}%` }} />
                                    </div>
                                </div>
                            ))}

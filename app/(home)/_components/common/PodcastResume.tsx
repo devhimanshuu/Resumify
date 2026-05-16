@@ -13,6 +13,7 @@ const PodcastResume = () => {
   const [playing, setPlaying] = useState(false);
   const [active, setActive] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [script, setScript] = useState("");
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const generatePodcast = async () => {
@@ -25,12 +26,15 @@ const PodcastResume = () => {
       });
       const data = await res.json();
       
-      if (data.audioUrl) {
-        setAudioUrl(data.audioUrl);
+      if (data.success) {
+        setAudioUrl(data.audioUrl || null);
+        setScript(data.script || "");
         setActive(true);
         toast({
           title: "Podcast Ready!",
-          description: "Your 2-minute career highlight interview is ready to play.",
+          description: data.audioUrl
+            ? "Your 2-minute career highlight interview is ready to play."
+            : "Your personalized script is ready. Playback will use your browser voice.",
         });
       }
     } catch (error) {
@@ -46,13 +50,27 @@ const PodcastResume = () => {
   };
 
   const togglePlayback = () => {
-    if (audioRef.current) {
+    if (audioUrl && audioRef.current) {
       if (playing) {
         audioRef.current.pause();
       } else {
         audioRef.current.play();
       }
       setPlaying(!playing);
+      return;
+    }
+
+    if (typeof window !== "undefined" && script) {
+      window.speechSynthesis.cancel();
+      if (!playing) {
+        const utterance = new SpeechSynthesisUtterance(script);
+        utterance.rate = 0.95;
+        utterance.onend = () => setPlaying(false);
+        window.speechSynthesis.speak(utterance);
+        setPlaying(true);
+      } else {
+        setPlaying(false);
+      }
     }
   };
 
@@ -105,6 +123,12 @@ const PodcastResume = () => {
                     </div>
                     <h4 className="text-lg font-black text-white italic tracking-tight">The {resumeInfo?.personalInfo?.firstName}&apos;s Spotlight</h4>
                 </div>
+
+                {script && (
+                    <div className="w-full max-h-28 overflow-y-auto rounded-2xl bg-white/5 border border-white/10 p-3 text-left text-[10px] text-slate-300 leading-relaxed custom-scrollbar">
+                        {script}
+                    </div>
+                )}
 
                 <div className="w-full space-y-4">
                     <div className="flex items-center justify-center gap-6">

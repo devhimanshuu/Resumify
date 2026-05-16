@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { PremiumPage } from "@/components/ui/premium-page";
 
 const AnalyticsDashboard = () => {
   const [data, setData] = useState({
@@ -27,6 +28,7 @@ const AnalyticsDashboard = () => {
     clickThroughs: 0,
     viewsOverTime: Array(14).fill(0),
     branchMetrics: [] as any[],
+    trafficSources: [] as { label: string; percentage: number }[],
   });
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +55,7 @@ const AnalyticsDashboard = () => {
 
   if (loading) {
     return (
-      <div className="w-full max-w-7xl mx-auto px-5 py-20 flex items-center justify-center">
+      <div className="flex w-full items-center justify-center px-5 py-20">
         <div className="flex flex-col items-center gap-4">
           <Loader className="animate-spin text-indigo-500 w-10 h-10" />
           <p className="text-muted-foreground animate-pulse font-medium">
@@ -70,7 +72,8 @@ const AnalyticsDashboard = () => {
   )[0];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-5 py-8 space-y-10 pb-20">
+    <PremiumPage>
+      <div className="space-y-10 pb-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 text-[10px] font-bold uppercase tracking-widest mb-4">
@@ -88,8 +91,8 @@ const AnalyticsDashboard = () => {
         </div>
 
         {winningBranch && winningBranch.responses > 0 && (
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+          <div className="flex items-center gap-4 rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4">
+            <div className="flex size-12 items-center justify-center rounded-md bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
               <Trophy size={24} />
             </div>
             <div>
@@ -149,7 +152,7 @@ const AnalyticsDashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-          <div className="xl:col-span-2 bg-card border rounded-3xl overflow-hidden">
+          <div className="xl:col-span-2 overflow-hidden rounded-lg border bg-card shadow-sm">
             <div className="p-6 border-b bg-muted/30">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground">
@@ -224,21 +227,27 @@ const AnalyticsDashboard = () => {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-indigo-600 rounded-3xl p-6 text-white relative overflow-hidden group">
-              <div className="absolute top-[-20%] right-[-10%] w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
+            <div className="relative overflow-hidden rounded-lg bg-indigo-600 p-6 text-white shadow-sm">
               <div className="relative z-10 space-y-4">
                 <h3 className="text-lg font-bold">Optimization Tips</h3>
                 <ul className="space-y-3 text-sm text-indigo-100">
-                  <li className="flex gap-2">
-                    <ArrowRight size={16} className="shrink-0" />
-                    Your &quot;Frontend Role&quot; branch has 20% higher engagement than
-                    the base.
-                  </li>
-                  <li className="flex gap-2">
-                    <ArrowRight size={16} className="shrink-0" />
-                    Try using more &quot;Action Verbs&quot; in your experience summary to
-                    boost reach.
-                  </li>
+                  {data.branchMetrics.length > 0 ? (
+                    <>
+                      <li className="flex gap-2">
+                        <ArrowRight size={16} className="shrink-0" />
+                        {data.branchMetrics[0].title} is currently your highest-viewed version.
+                      </li>
+                      <li className="flex gap-2">
+                        <ArrowRight size={16} className="shrink-0" />
+                        Branch resumes for each target role and compare downloads plus recruiter leads.
+                      </li>
+                    </>
+                  ) : (
+                    <li className="flex gap-2">
+                      <ArrowRight size={16} className="shrink-0" />
+                      Publish a portfolio link to start collecting performance signals.
+                    </li>
+                  )}
                 </ul>
                 <Button
                   variant="secondary"
@@ -250,14 +259,20 @@ const AnalyticsDashboard = () => {
               </div>
             </div>
 
-            <div className="bg-card border rounded-3xl p-6 space-y-4">
+            <div className="space-y-4 rounded-lg border bg-card p-6 shadow-sm">
               <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground">
                 Traffic Sources
               </h3>
               <div className="space-y-4">
-                <SourceItem label="LinkedIn Direct" percentage={65} />
-                <SourceItem label="Portfolio Site" percentage={20} />
-                <SourceItem label="Recruiter Share" percentage={15} />
+                {data.trafficSources.length > 0 ? (
+                  data.trafficSources.map((source) => (
+                    <SourceItem key={source.label} label={source.label} percentage={source.percentage} />
+                  ))
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    Traffic sources will appear after public portfolio views.
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -265,7 +280,7 @@ const AnalyticsDashboard = () => {
       </section>
 
       {/* Views Over Time */}
-      <section className="bg-card border rounded-3xl p-8">
+      <section className="rounded-lg border bg-card p-8 shadow-sm">
         <h3 className="font-bold text-lg mb-8 flex items-center gap-2">
           <BarChart className="w-5 h-5 text-indigo-500" />
           Aggregate Audience Growth
@@ -289,16 +304,17 @@ const AnalyticsDashboard = () => {
           <span>Today</span>
         </div>
       </section>
-    </div>
+      </div>
+    </PremiumPage>
   );
 };
 
 const StatCard = ({ icon, label, value, trend, color }: any) => (
-  <div className="bg-card border rounded-3xl p-6 hover:shadow-xl hover:shadow-black/[0.02] transition-all group">
+  <div className="group rounded-lg border bg-card p-6 shadow-sm transition-colors hover:border-indigo-500/30">
     <div className="flex items-center justify-between mb-4">
       <div
         className={cn(
-          "p-2.5 rounded-2xl",
+          "p-2.5 rounded-md",
           color === "blue" && "bg-blue-500/10 text-blue-600",
           color === "purple" && "bg-purple-500/10 text-purple-600",
           color === "orange" && "bg-orange-500/10 text-orange-600",

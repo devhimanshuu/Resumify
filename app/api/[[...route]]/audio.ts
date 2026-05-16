@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { getAuthUser } from "@/lib/clerk";
+import { AIChatSession } from "@/lib/groq-model";
 
 const audioRoute = new Hono()
   .post("/transcribe", getAuthUser, async (c) => {
@@ -11,7 +12,10 @@ const audioRoute = new Hono()
         return c.json({ success: false, message: "No audio file provided" }, 400);
       }
 
-      const groqApiKey = process.env.GROQ_API_KEY || process.env.NEXT_PUBLIC_GROQ_API_KEY;
+      const groqApiKey = process.env.GROQ_API_KEY;
+      if (!groqApiKey) {
+        return c.json({ success: false, message: "Missing Groq API key" }, 500);
+      }
       
       const groqFormData = new FormData();
       groqFormData.append("file", file);
@@ -41,14 +45,21 @@ const audioRoute = new Hono()
     try {
       const { resumeData } = await c.req.json();
       const prompt = `
-        You are a world-class podcast producer. Create a 2-minute "Career Spotlight" interview script...
-        (Prompt truncated for brevity)
+        You are a world-class podcast producer. Create a concise 2-minute "Career Spotlight" interview script.
+        Make it specific to the candidate's resume. Use two speakers: HOST and CANDIDATE.
+        Avoid generic hype and mention concrete roles, skills, education, and achievements where available.
+
+        RESUME DATA:
+        ${JSON.stringify(resumeData)}
+
+        Return only the script text.
       `;
-      // Logic for script generation and TTS would go here
+      const result = await AIChatSession.sendMessage(prompt);
+      const script = result.response.text();
       return c.json({ 
         success: true, 
-        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", 
-        script: "Podcast script generated successfully." 
+        audioUrl: null, 
+        script 
       });
     } catch (error: any) {
       return c.json({ success: false, message: "Failed to generate podcast" }, 500);

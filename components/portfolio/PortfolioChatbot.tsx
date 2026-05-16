@@ -83,12 +83,28 @@ const PortfolioChatbot = ({ resumeInfo }: { resumeInfo: any }) => {
     }
   };
 
-  const submitLead = (e: React.FormEvent) => {
+  const submitLead = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, you'd save this to a 'leads' table
-    console.log("Captured Lead:", leadInfo);
-    setShowLeadGen(false);
-    setMessages(prev => [...prev, { role: "bot", content: "Thanks for sharing! I've noted your interest. Would you like to know anything else about my experience?" }]);
+    try {
+      await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          documentId: resumeInfo.documentId,
+          email: leadInfo.email,
+          linkedin: leadInfo.linkedin,
+          message: messages
+            .slice(-6)
+            .map((message) => `${message.role}: ${message.content}`)
+            .join("\n"),
+        }),
+      });
+      setShowLeadGen(false);
+      setMessages(prev => [...prev, { role: "bot", content: "Thanks for sharing! I've noted your interest. Would you like to know anything else about my experience?" }]);
+    } catch (error) {
+      console.error(error);
+      setMessages(prev => [...prev, { role: "bot", content: "I couldn't save those details right now. Please use the contact information on the page instead." }]);
+    }
   };
 
   return (

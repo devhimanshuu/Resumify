@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import PortfolioChatbot from "@/components/portfolio/PortfolioChatbot";
 import ARPopOutViewer from "./ARPopOutViewer";
+import { sanitizeResumeHtml } from "@/lib/sanitize-html";
 
 
 const PublicPortfolio = () => {
@@ -59,6 +60,11 @@ const PublicPortfolio = () => {
 
   const handleDownload = async () => {
     try {
+      await fetch("/api/analytics/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ documentId: data.documentId, type: "download", source: "portfolio" }),
+      });
       const response = await fetch("/api/pdf", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -188,7 +194,7 @@ const PublicPortfolio = () => {
                       </div>
                       <div
                         className="text-muted-foreground leading-relaxed prose prose-invert max-w-none"
-                        dangerouslySetInnerHTML={{ __html: exp.workSummary }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeResumeHtml(exp.workSummary) }}
                       />
                     </div>
                   </div>

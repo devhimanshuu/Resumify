@@ -14,6 +14,7 @@ import {
 import { AIChatSession } from "@/lib/groq-model";
 import { toast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { sanitizeResumeHtml } from "@/lib/sanitize-html";
 
 interface VoiceToResumeProps {
   onGenerated: (content: string) => void;
@@ -118,7 +119,7 @@ const VoiceToResume: React.FC<VoiceToResumeProps> = ({ onGenerated, jobTitle }) 
   };
 
   const handleKeep = () => {
-    onGenerated(result);
+    onGenerated(sanitizeResumeHtml(result));
     setOpen(false);
     setTranscript("");
     setResult("");
@@ -227,7 +228,7 @@ const VoiceToResume: React.FC<VoiceToResumeProps> = ({ onGenerated, jobTitle }) 
                         className="w-full space-y-6"
                     >
                         <div className="p-6 rounded-2xl bg-indigo-50 border border-indigo-100 text-sm prose dark:prose-invert max-h-[300px] overflow-y-auto">
-                            <div dangerouslySetInnerHTML={{ __html: result }} />
+                            <div dangerouslySetInnerHTML={{ __html: sanitizeResumeHtml(result) }} />
                         </div>
                         <div className="flex gap-3">
                             <Button 

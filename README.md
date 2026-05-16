@@ -66,6 +66,7 @@ CareerForge AI is architected for performance, scalability, and developer experi
    ```env
    # Database
    DATABASE_URL=your_postgres_connection_string
+   POSTGRES_URL=your_postgres_connection_string
 
    # Clerk Authentication
    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
@@ -77,7 +78,11 @@ CareerForge AI is architected for performance, scalability, and developer experi
 
    # AI Integration
    GROQ_API_KEY=your_groq_api_key
-   NEXT_PUBLIC_GROQ_API_KEY=your_groq_api_key
+   NVIDIA_KIMI_KEY=your_nvidia_kimi_key
+   NVIDIA_IMAGE_KEY=your_nvidia_image_key
+
+   # Analytics
+   ANALYTICS_SALT=use_a_long_random_string
 
    # App URL
    NEXT_PUBLIC_APP_URL=http://localhost:3000

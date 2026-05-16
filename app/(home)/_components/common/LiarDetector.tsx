@@ -132,7 +132,7 @@ const LiarDetector = () => {
 
                 <div className="p-2 rounded-lg bg-indigo-500/5 border border-indigo-500/10">
                     <p className="text-[9px] text-indigo-300 italic leading-relaxed text-center">
-                        "{results.verdict}"
+                        &quot;{results.verdict}&quot;
                     </p>
                 </div>
             </div>

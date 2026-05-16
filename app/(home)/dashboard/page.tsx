@@ -24,6 +24,7 @@ import useGetDocuments from "@/features/document/use-get-document";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import ResumeImport from "../_components/common/ResumeImport";
+import { PremiumPage } from "@/components/ui/premium-page";
 
 
 const containerVariants: Variants = {
@@ -72,37 +73,33 @@ const Page = () => {
 
   const resumeCount = resumes.length;
   const publicCount = resumes.filter((r) => r?.status === "public").length;
+  const activeStatuses = apps.filter((a) => ["interviewing", "offer"].includes(a.status));
+  const leadingStatus = apps.length
+    ? `${Math.round((activeStatuses.length / apps.length) * 100)}% interview/offer conversion`
+    : "No application data yet";
 
   return (
-    <div className="w-full min-h-[calc(100vh-56px)] bg-background relative overflow-x-hidden">
-      {/* Ambient Background Effects */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[20%] w-[500px] h-[500px] bg-indigo-500/[0.03] rounded-full blur-[100px]" />
-        <div className="absolute bottom-[20%] right-[10%] w-[400px] h-[400px] bg-violet-500/[0.02] rounded-full blur-[80px]" />
-      </div>
-
+    <PremiumPage>
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="w-full mx-auto max-w-7xl 3xl:max-w-9xl 4xl:max-w-10xl py-8 px-5 relative z-10"
+        className="relative z-10"
       >
         {/* ── Hero Section ── */}
         <motion.div variants={itemVariants} className="mb-10">
-          <div className="relative rounded-2xl overflow-hidden border border-border/40 bg-card/40 backdrop-blur-md">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.05] via-transparent to-violet-500/[0.05]" />
-
+          <div className="relative overflow-hidden rounded-lg border border-border/70 bg-card/85 shadow-sm">
             <div className="relative z-10 p-6 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="relative">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-700 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <div className="flex size-10 items-center justify-center rounded-md bg-foreground text-background shadow-sm">
                       <LayoutDashboard size={20} className="text-white" />
                     </div>
                     <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-card animate-pulse" />
                   </div>
                   <div>
-                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                    <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">
                       Dashboard
                     </h1>
                     <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-0.5 flex items-center gap-1.5">
@@ -186,10 +183,9 @@ const Page = () => {
                 </span>
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                &quot;Based on your recent applications, you have a high success
-                rate in <b>Fullstack Roles</b>. Consider adding <b>Next.js</b>{" "}
-                and <b>Drizzle ORM</b> to your main resume to increase your ATS
-                score by 15%.&quot;
+                &quot;{apps.length > 0
+                  ? `Based on your current pipeline, you have ${leadingStatus}. Keep branching resumes by role and compare public views, downloads, and recruiter leads.`
+                  : `Publish a portfolio and add applications to unlock personalized market insights from your own activity.`}&quot;
               </p>
               <Button
                 variant="outline"
@@ -315,7 +311,7 @@ const Page = () => {
           </div>
         </motion.div>
       </motion.div>
-    </div>
+    </PremiumPage>
   );
 };
 
@@ -360,10 +356,10 @@ const StatsCard: React.FC<StatsCardProps> = ({
 }) => {
   const colors = accentMap[accent] || accentMap.indigo;
   return (
-    <div className="group relative rounded-2xl border border-border/40 bg-card/30 p-5 hover:bg-card/50 transition-all duration-300">
+    <div className="group relative rounded-lg border border-border/70 bg-card/85 p-5 shadow-sm transition-colors duration-300 hover:border-indigo-500/30">
       <div className="flex items-center gap-3 mb-3">
         <div
-          className={`w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center ${colors.text}`}
+          className={`flex size-8 items-center justify-center rounded-md ${colors.bg} ${colors.text}`}
         >
           {icon}
         </div>
@@ -401,10 +397,10 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
 }) => {
   return (
     <Link href={href}>
-      <div className="group relative rounded-2xl border border-border/40 bg-card/20 p-4 hover:bg-card/40 transition-all duration-300 cursor-pointer h-full">
+      <div className="group relative h-full cursor-pointer rounded-lg border border-border/70 bg-card/80 p-4 shadow-sm transition-colors duration-300 hover:border-indigo-500/30">
         <div className="flex items-start justify-between mb-3">
           <div
-            className={`w-9 h-9 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center ${iconColor}`}
+            className={`flex size-9 items-center justify-center rounded-md bg-gradient-to-br ${gradient} ${iconColor}`}
           >
             {icon}
           </div>

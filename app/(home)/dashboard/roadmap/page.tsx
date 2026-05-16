@@ -1,124 +1,129 @@
 "use client";
 import React from "react";
-import { Map, Flag, Sparkles, Target, Star, ChevronRight, Briefcase, GraduationCap } from "lucide-react";
+import { Flag, Sparkles, Target, Star, ChevronRight, Briefcase, GraduationCap, Map } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PremiumPage, PremiumPageHeader, PremiumPanel } from "@/components/ui/premium-page";
+
+const roadmap = [
+  {
+    year: "Now",
+    status: "Current",
+    role: "Frontend Developer",
+    company: "Baseline profile",
+    icon: <Briefcase size={20} />,
+    milestones: ["Strengthen measurable impact", "Ship a role-specific portfolio branch"],
+    active: true,
+  },
+  {
+    year: "12 mo",
+    status: "Next",
+    role: "Senior Frontend Engineer",
+    company: "Product-led team",
+    icon: <Target size={20} />,
+    milestones: ["Own architecture decisions", "Add performance and accessibility case studies"],
+    active: false,
+  },
+  {
+    year: "24 mo",
+    status: "Projected",
+    role: "Staff Engineer",
+    company: "Platform organization",
+    icon: <Star size={20} />,
+    milestones: ["Lead cross-team technical strategy", "Publish system design artifacts"],
+    active: false,
+  },
+  {
+    year: "36 mo",
+    status: "Vision",
+    role: "Engineering Lead",
+    company: "High-growth company",
+    icon: <Flag size={20} />,
+    milestones: ["Mentor senior contributors", "Own hiring and operating cadence"],
+    active: false,
+  },
+];
 
 const CareerRoadmap = () => {
   return (
-    <div className="p-10 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-12">
-        <div>
-          <h1 className="text-4xl font-black tracking-tight mb-2">Career Roadmap</h1>
-          <p className="text-muted-foreground text-lg">Your personalized path from where you are to where you want to be.</p>
-        </div>
-        <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 gap-2 h-12 px-6 rounded-xl shadow-xl shadow-indigo-500/20">
-          <Sparkles size={18} />
-          Refine Trajectory
-        </Button>
-      </div>
+    <PremiumPage>
+      <PremiumPageHeader
+        eyebrow="Trajectory Planner"
+        title="Career Roadmap"
+        description="A practical path from today’s resume to the next level. Each milestone should become evidence in your resume, portfolio, and interview stories."
+        icon={<Map size={13} />}
+        action={
+          <Button size="lg" className="h-11 gap-2 rounded-md bg-foreground px-5 font-bold text-background hover:bg-foreground/90">
+            <Sparkles size={18} />
+            Refine Trajectory
+          </Button>
+        }
+      />
 
       <div className="relative">
-        {/* Timeline Path */}
-        <div className="absolute left-[39px] md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500/0 via-indigo-500/50 to-indigo-500/0 md:-translate-x-1/2" />
+        <div className="absolute left-4 top-4 h-[calc(100%-2rem)] w-px bg-border md:left-1/2" />
+        <div className="space-y-6 md:space-y-8">
+          {roadmap.map((node, i) => (
+            <div key={node.role} className={`relative grid gap-4 md:grid-cols-2 ${i % 2 === 0 ? "" : "md:[&>*:first-child]:col-start-2"}`}>
+              <div className="ml-10 md:ml-0">
+                <PremiumPanel className={node.active ? "border-indigo-500/40 bg-indigo-500 text-white shadow-lg shadow-indigo-500/15" : "p-0"}>
+                  <div className="p-6">
+                    <div className="mb-4 flex items-center justify-between">
+                      <span className={`text-[10px] font-black uppercase tracking-[0.18em] ${node.active ? "text-white/70" : "text-indigo-500"}`}>
+                        {node.status} · {node.year}
+                      </span>
+                      <div className={`flex size-10 items-center justify-center rounded-md ${node.active ? "bg-white/15" : "bg-indigo-500/10 text-indigo-500"}`}>
+                        {node.icon}
+                      </div>
+                    </div>
+                    <h3 className="text-2xl font-black tracking-tight">{node.role}</h3>
+                    <p className={`mt-1 text-sm ${node.active ? "text-white/75" : "text-muted-foreground"}`}>{node.company}</p>
 
-        <div className="space-y-12 md:space-y-24">
-            {[
-                { 
-                    year: "2024", 
-                    status: "Current", 
-                    role: "Frontend Developer", 
-                    company: "Current Employer",
-                    icon: <Briefcase size={20} />,
-                    milestones: ["Master Next.js 14", "Lead UI Component Migration"],
-                    active: true 
-                },
-                { 
-                    year: "2026", 
-                    status: "Projected", 
-                    role: "Senior Frontend Architect", 
-                    company: "Top-Tier Tech",
-                    icon: <Target size={20} />,
-                    milestones: ["System Design Expertise", "AI Integration Specialist"],
-                    active: false 
-                },
-                { 
-                    year: "2028", 
-                    status: "Projected", 
-                    role: "Staff Engineer", 
-                    company: "Unicorn Startup",
-                    icon: <Star size={20} />,
-                    milestones: ["Technical Leadership", "Cross-Platform Strategy"],
-                    active: false 
-                },
-                { 
-                    year: "2030", 
-                    status: "Visionary", 
-                    role: "VP of Engineering / CTO", 
-                    company: "Your Own Venture",
-                    icon: <Flag size={20} />,
-                    milestones: ["Entrepreneurship", "Org Scaling"],
-                    active: false 
-                },
-            ].map((node, i) => (
-                <div key={i} className={`relative flex flex-col md:flex-row items-center justify-between w-full ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}>
-                    <div className="w-full md:w-5/12 pl-20 md:pl-0">
-                        <div className={`p-8 rounded-[2rem] border transition-all duration-500 group ${node.active ? "bg-indigo-600 text-white border-indigo-500 shadow-2xl shadow-indigo-500/20 scale-105" : "bg-card border-border/50 glass hover:bg-white/5"}`}>
-                            <div className="flex items-center justify-between mb-4">
-                                <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${node.active ? "text-white/60" : "text-indigo-400"}`}>
-                                    {node.status} • {node.year}
-                                </span>
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${node.active ? "bg-white/10" : "bg-indigo-500/10 text-indigo-400"}`}>
-                                    {node.icon}
-                                </div>
-                            </div>
-                            <h3 className="text-2xl font-black mb-1">{node.role}</h3>
-                            <p className={`text-sm mb-6 ${node.active ? "text-white/70" : "text-muted-foreground"}`}>{node.company}</p>
-                            
-                            <div className="space-y-3">
-                                {node.milestones.map((m, mi) => (
-                                    <div key={mi} className="flex items-center gap-3">
-                                        <div className={`w-1.5 h-1.5 rounded-full ${node.active ? "bg-white" : "bg-indigo-500"}`} />
-                                        <span className={`text-xs font-bold ${node.active ? "text-white/80" : "text-foreground"}`}>{m}</span>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {!node.active && (
-                                <Button variant="ghost" className="mt-8 p-0 h-auto text-[10px] font-black uppercase tracking-widest text-indigo-400 hover:text-indigo-300 hover:bg-transparent flex items-center gap-2 group/btn">
-                                    View Requirements
-                                    <ChevronRight size={12} className="group-hover/btn:translate-x-1 transition-transform" />
-                                </Button>
-                            )}
+                    <div className="mt-6 space-y-3">
+                      {node.milestones.map((m) => (
+                        <div key={m} className="flex items-start gap-3">
+                          <span className={`mt-1.5 size-1.5 rounded-full ${node.active ? "bg-white" : "bg-indigo-500"}`} />
+                          <span className={`text-sm font-medium ${node.active ? "text-white/85" : "text-foreground"}`}>{m}</span>
                         </div>
+                      ))}
                     </div>
 
-                    {/* Timeline Node */}
-                    <div className="absolute left-[39px] md:left-1/2 top-1/2 -translate-y-1/2 md:-translate-x-1/2 w-8 h-8 rounded-full border-4 border-background bg-indigo-500 z-10 flex items-center justify-center">
-                        <div className={`w-2 h-2 rounded-full bg-white ${node.active ? "animate-ping" : ""}`} />
-                    </div>
+                    {!node.active && (
+                      <Button variant="ghost" className="mt-6 h-auto p-0 text-[10px] font-black uppercase tracking-widest text-indigo-500 hover:bg-transparent">
+                        View Requirements
+                        <ChevronRight size={12} className="ml-2" />
+                      </Button>
+                    )}
+                  </div>
+                </PremiumPanel>
+              </div>
 
-                    <div className="hidden md:block w-5/12" />
-                </div>
-            ))}
-        </div>
-      </div>
-
-      <div className="mt-32 p-12 rounded-[3rem] bg-indigo-600 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-12 opacity-10">
-            <GraduationCap size={200} />
-        </div>
-        <div className="relative z-10 max-w-2xl">
-            <h2 className="text-4xl font-black mb-4 italic tracking-tighter">Skill Accelerator</h2>
-            <p className="text-white/80 text-lg mb-8">
-                Based on your roadmap to **Senior Architect**, we recommend these critical certifications to shorten your path by 14 months.
-            </p>
-            <div className="flex flex-wrap gap-4">
-                <Button className="bg-white text-indigo-600 hover:bg-white/90 font-bold rounded-xl px-6">AWS Solutions Architect</Button>
-                <Button className="bg-white text-indigo-600 hover:bg-white/90 font-bold rounded-xl px-6">Advanced System Design</Button>
+              <div className="absolute left-4 top-8 z-10 flex size-8 -translate-x-1/2 items-center justify-center rounded-full border-4 border-background bg-indigo-500 md:left-1/2">
+                <div className={`size-2 rounded-full bg-white ${node.active ? "animate-ping" : ""}`} />
+              </div>
             </div>
+          ))}
         </div>
       </div>
-    </div>
+
+      <PremiumPanel className="mt-12 overflow-hidden bg-foreground text-background">
+        <div className="grid gap-6 p-8 md:grid-cols-[1fr_auto] md:items-center">
+          <div>
+            <div className="mb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-background/60">
+              <GraduationCap size={14} />
+              Skill Accelerator
+            </div>
+            <h2 className="text-3xl font-black tracking-tight">Turn roadmap gaps into resume evidence.</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-background/70">
+              Pick one certification, one public project, and one measurable workplace initiative. The system becomes stronger when every milestone leaves proof.
+            </p>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button className="rounded-md bg-background text-foreground hover:bg-background/90">AWS Architecture</Button>
+            <Button className="rounded-md bg-background text-foreground hover:bg-background/90">System Design</Button>
+          </div>
+        </div>
+      </PremiumPanel>
+    </PremiumPage>
   );
 };
 

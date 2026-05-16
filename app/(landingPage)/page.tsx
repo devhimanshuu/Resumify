@@ -32,7 +32,7 @@ export default function Home() {
   return (
     <div className="w-full overflow-hidden">
       {/* ===== Hero Section ===== */}
-      <section className="relative w-full min-h-[95vh] flex items-center justify-center bg-background overflow-hidden">
+      <section className="relative flex min-h-[92vh] w-full items-center justify-center overflow-hidden bg-background">
         {/* Falling Pattern Background */}
         <div className="absolute inset-0 z-0">
           <FallingPattern
@@ -41,17 +41,16 @@ export default function Home() {
           />
         </div>
 
-        {/* Floating Orbs for extra depth */}
-        <div className="absolute top-20 left-[15%] w-72 h-72 bg-indigo-500/10 rounded-full blur-[120px] animate-float z-0" />
-        <div
-          className="absolute bottom-20 right-[10%] w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] animate-float z-0"
-          style={{ animationDelay: "2s" }}
-        />
+        <div className="absolute inset-x-0 top-0 z-0 h-80 bg-gradient-to-b from-indigo-500/10 via-background/60 to-transparent" />
+        
+        {/* Background Blobs */}
+        <div className="absolute top-[10%] left-[10%] w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] z-0 animate-pulse pointer-events-none" />
+        <div className="absolute bottom-[20%] right-[10%] w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px] z-0 pointer-events-none" />
 
-        <div className="relative z-10 w-full flex flex-col items-center justify-center pt-20 pb-24 max-w-6xl mx-auto px-5 text-center">
+        <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center justify-center px-5 pb-20 pt-20 text-center">
           {/* Badge */}
           <div className="animate-fade-up mb-8">
-            <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium glass border border-indigo-500/20 shadow-2xl shadow-indigo-500/10">
+            <div className="inline-flex items-center gap-2 rounded-md border border-indigo-500/20 bg-background/80 px-4 py-2 text-sm font-medium shadow-sm glass">
               <span className="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse" />
               <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent font-semibold">
                 Introducing CareerForge AI Suite
@@ -61,17 +60,18 @@ export default function Home() {
 
           {/* Heading */}
           <h1
-            className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tight animate-fade-up leading-[1.1] max-w-full mx-auto px-2 break-words"
+            className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tight animate-fade-up leading-[1.1] max-w-full mx-auto px-2 break-words font-display"
             style={{ animationDelay: "0.1s" }}
           >
             <span className="text-foreground">Supercharge Your </span>
             <br className="hidden md:block" />
-            <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient py-2">
+            <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient py-2 inline-block min-w-[320px] md:min-w-[500px]">
               <TypewriterText
                 words={["Resumes", "Interviews", "Cover Letters", "Job Hunt"]}
                 typingSpeed={100}
                 deletingSpeed={60}
                 pauseDelay={2500}
+                className="whitespace-nowrap"
               />
             </span>
           </h1>
@@ -94,7 +94,7 @@ export default function Home() {
             <Button
               asChild
               size="lg"
-              className="w-full sm:w-auto h-14 px-8 text-base font-semibold bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 gap-2 rounded-xl"
+              className="w-full sm:w-auto h-14 px-8 text-base font-semibold bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 gap-2 rounded-xl shimmer-effect"
             >
               <Link href="/sign-up">
                 <Sparkles size="18px" />
@@ -114,8 +114,7 @@ export default function Home() {
 
           {/* Stats Bar */}
           <div
-            className="mt-16 sm:mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 py-6 sm:py-8 px-4 sm:px-6 rounded-2xl glass border-border/50 animate-fade-up w-full"
-            style={{ animationDelay: "0.5s" }}
+            className="mt-16 grid w-full grid-cols-2 gap-4 rounded-lg border bg-card/80 px-4 py-6 shadow-sm animate-fade-up sm:mt-20 sm:gap-8 sm:px-6 sm:py-8 md:grid-cols-4"
           >
             <div className="flex flex-col items-center justify-center">
               <div className="text-2xl sm:text-3xl font-black text-foreground flex items-center">
@@ -320,15 +319,15 @@ export default function Home() {
       <footer className="border-t border-border/50 bg-card/20 pt-20 pb-10 px-5">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-16">
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-2 mb-6">
+            <div className="flex items-center gap-2 mb-6 group">
               <Image
-                src="/logo.svg"
+                src="/CareerForge_ai_final.png"
                 alt="CareerForge AI Logo"
-                width={32}
-                height={32}
-                className="rounded-lg shadow-lg shadow-indigo-500/20"
+                width={40}
+                height={40}
+                className="group-hover:scale-110 transition-all duration-300 drop-shadow-[0_0_12px_rgba(99,102,241,0.4)]"
               />
-              <span className="font-bold text-xl bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
+              <span className="font-display font-bold text-2xl tracking-tight bg-gradient-to-r from-indigo-500 to-indigo-400 bg-clip-text text-transparent">
                 CareerForge AI
               </span>
             </div>

@@ -47,6 +47,17 @@ const applicationRoute = new Hono()
         const userId = user.id;
         const values = c.req.valid("json");
 
+        const resume = await db.query.documentTable.findFirst({
+          where: and(
+            eq(documentTable.documentId, values.documentId),
+            eq(documentTable.userId, userId)
+          ),
+        });
+
+        if (!resume) {
+          return c.json({ success: false, message: "Resume not found" }, 404);
+        }
+
         const [data] = await db
           .insert(applicationTable)
           .values({

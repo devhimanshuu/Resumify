@@ -1,17 +1,51 @@
 import { NextResponse } from "next/server";
+import { getAuth } from "@clerk/nextjs/server";
+import { lookup } from "dns/promises";
+import { isIP } from "net";
+
+const PRIVATE_HOSTS = new Set(["localhost", "127.0.0.1", "0.0.0.0", "::1"]);
+
+const isPrivateIp = (address: string) => {
+  if (address.startsWith("10.")) return true;
+  if (address.startsWith("127.")) return true;
+  if (address.startsWith("169.254.")) return true;
+  if (address.startsWith("192.168.")) return true;
+  if (/^172\.(1[6-9]|2\d|3[0-1])\./.test(address)) return true;
+  if (address === "::1" || address.toLowerCase().startsWith("fc") || address.toLowerCase().startsWith("fd")) return true;
+  return false;
+};
 
 export async function POST(req: Request) {
   try {
+    const { userId } = getAuth(req as any);
+    if (!userId) return new NextResponse("Unauthorized", { status: 401 });
+
     const { url } = await req.json();
 
     if (!url) {
       return NextResponse.json({ error: "URL is required" }, { status: 400 });
     }
 
-    const response = await fetch(url, {
+    const parsedUrl = new URL(url);
+    if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+      return NextResponse.json({ error: "Only http and https URLs are supported" }, { status: 400 });
+    }
+
+    const hostname = parsedUrl.hostname.toLowerCase();
+    if (PRIVATE_HOSTS.has(hostname) || isPrivateIp(hostname)) {
+      return NextResponse.json({ error: "This URL is not allowed" }, { status: 400 });
+    }
+
+    const addresses = isIP(hostname) ? [{ address: hostname }] : await lookup(hostname, { all: true });
+    if (addresses.some((entry) => isPrivateIp(entry.address))) {
+      return NextResponse.json({ error: "This URL resolves to a private network" }, { status: 400 });
+    }
+
+    const response = await fetch(parsedUrl.toString(), {
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
       },
+      signal: AbortSignal.timeout(8000),
     });
 
     if (!response.ok) {
@@ -21,7 +55,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const html = await response.text();
+    const html = (await response.text()).slice(0, 500_000);
 
     // Basic extraction: remove scripts, styles, and html tags
     const bodyContentMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);

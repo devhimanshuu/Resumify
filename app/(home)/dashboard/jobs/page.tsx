@@ -1,13 +1,21 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, ExternalLink } from "lucide-react";
+import { Plus, Trash2, ExternalLink, Briefcase, Kanban, Clock3 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
+import { PremiumPage, PremiumPageHeader, PremiumPanel, PremiumStatCard } from "@/components/ui/premium-page";
 
 type Column = "Wishlist" | "Applied" | "Interviewing" | "Offer";
 const COLUMNS: Column[] = ["Wishlist", "Applied", "Interviewing", "Offer"];
+
+const columnMeta: Record<Column, { accent: string; hint: string }> = {
+  Wishlist: { accent: "bg-slate-500", hint: "Roles to qualify" },
+  Applied: { accent: "bg-blue-500", hint: "Submitted applications" },
+  Interviewing: { accent: "bg-amber-500", hint: "Active conversations" },
+  Offer: { accent: "bg-emerald-500", hint: "Final outcomes" },
+};
 
 interface JobItem {
   id: string;
@@ -45,6 +53,12 @@ const JobBoard = () => {
     }
   }, [jobs, isLoaded]);
 
+  const stats = useMemo(() => {
+    const active = jobs.filter((job) => job.column === "Applied" || job.column === "Interviewing").length;
+    const offers = jobs.filter((job) => job.column === "Offer").length;
+    return { active, offers };
+  }, [jobs]);
+
   const handleAddJob = () => {
     if (!newCompany || !newRole) {
       toast({ title: "Error", description: "Company and Role are required", variant: "destructive" });
@@ -77,110 +91,117 @@ const JobBoard = () => {
   if (!isLoaded) return null;
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-5 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
-            Job Hunt Kanban
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Track your applications and link them to your tailored resumes.
-          </p>
-        </div>
-        <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2">
-              <Plus size={16} />
-              Add Job
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Application</DialogTitle>
-            </DialogHeader>
-            <div className="flex flex-col gap-4 mt-4">
-              <div>
-                <label className="text-sm font-medium mb-1 block">Company Name</label>
-                <Input value={newCompany} onChange={(e) => setNewCompany(e.target.value)} placeholder="e.g. Google" />
+    <PremiumPage>
+      <PremiumPageHeader
+        eyebrow="Opportunity Desk"
+        title="Job Hunt Kanban"
+        description="A focused board for scouting roles before they become formal applications. Keep this lightweight, then move qualified roles into the main application tracker."
+        icon={<Kanban size={13} />}
+        action={
+          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+            <DialogTrigger asChild>
+              <Button className="h-11 gap-2 rounded-md bg-foreground px-5 font-bold text-background hover:bg-foreground/90">
+                <Plus size={16} />
+                Add Job
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="rounded-lg">
+              <DialogHeader>
+                <DialogTitle>Add New Opportunity</DialogTitle>
+              </DialogHeader>
+              <div className="mt-4 flex flex-col gap-4">
+                <div>
+                  <label className="mb-1 block text-sm font-medium">Company Name</label>
+                  <Input value={newCompany} onChange={(e) => setNewCompany(e.target.value)} placeholder="e.g. Google" />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium">Role / Title</label>
+                  <Input value={newRole} onChange={(e) => setNewRole(e.target.value)} placeholder="e.g. Frontend Engineer" />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium">Job Posting URL</label>
+                  <Input value={newUrl} onChange={(e) => setNewUrl(e.target.value)} placeholder="https://..." />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium">Stage</label>
+                  <select
+                    value={targetColumn}
+                    onChange={(e) => setTargetColumn(e.target.value as Column)}
+                    className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  >
+                    {COLUMNS.map((col) => (
+                      <option key={col} value={col}>{col}</option>
+                    ))}
+                  </select>
+                </div>
+                <Button onClick={handleAddJob} className="mt-2 w-full rounded-md">Save Opportunity</Button>
               </div>
-              <div>
-                <label className="text-sm font-medium mb-1 block">Role / Title</label>
-                <Input value={newRole} onChange={(e) => setNewRole(e.target.value)} placeholder="e.g. Frontend Engineer" />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-1 block">Job Posting URL (Optional)</label>
-                <Input value={newUrl} onChange={(e) => setNewUrl(e.target.value)} placeholder="https://..." />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-1 block">Stage</label>
-                <select
-                  value={targetColumn}
-                  onChange={(e) => setTargetColumn(e.target.value as Column)}
-                  className="w-full border rounded-md h-10 px-3 bg-background"
-                >
-                  {COLUMNS.map((col) => (
-                    <option key={col} value={col}>{col}</option>
-                  ))}
-                </select>
-              </div>
-              <Button onClick={handleAddJob} className="w-full mt-2">Save Application</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+            </DialogContent>
+          </Dialog>
+        }
+      />
+
+      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <PremiumStatCard icon={<Briefcase size={18} />} label="Total Roles" value={jobs.length} detail="Local board" tone="indigo" />
+        <PremiumStatCard icon={<Clock3 size={18} />} label="Active Pipeline" value={stats.active} detail="In motion" tone="amber" />
+        <PremiumStatCard icon={<Kanban size={18} />} label="Offers" value={stats.offers} detail="Closed won" tone="emerald" />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         {COLUMNS.map((col) => {
           const colJobs = jobs.filter((j) => j.column === col);
+          const meta = columnMeta[col];
           return (
-            <div key={col} className="bg-muted/30 rounded-xl p-4 border border-border/50 min-h-[500px]">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-lg">{col}</h3>
-                <span className="bg-muted text-xs font-bold px-2 py-1 rounded-full">
+            <PremiumPanel key={col} className="min-h-[520px] p-3">
+              <div className="mb-4 flex items-start justify-between border-b border-border/60 pb-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className={`size-2 rounded-full ${meta.accent}`} />
+                    <h3 className="text-sm font-black uppercase tracking-wider">{col}</h3>
+                  </div>
+                  <p className="mt-1 text-[11px] text-muted-foreground">{meta.hint}</p>
+                </div>
+                <span className="rounded-md bg-muted px-2 py-1 text-xs font-black">
                   {colJobs.length}
                 </span>
               </div>
               <div className="flex flex-col gap-3">
                 {colJobs.map((job) => (
-                  <div key={job.id} className="bg-card border shadow-sm rounded-lg p-3 group">
-                    <div className="flex justify-between items-start mb-1">
-                      <h4 className="font-semibold text-sm line-clamp-1">{job.role}</h4>
-                      <button onClick={() => handleDelete(job.id)} className="text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div key={job.id} className="group rounded-lg border border-border/70 bg-background p-3 shadow-sm transition-colors hover:border-indigo-500/40">
+                    <div className="mb-2 flex items-start justify-between gap-3">
+                      <h4 className="line-clamp-2 text-sm font-bold leading-snug">{job.role}</h4>
+                      <button onClick={() => handleDelete(job.id)} className="text-muted-foreground opacity-0 transition-opacity hover:text-red-500 group-hover:opacity-100">
                         <Trash2 size={14} />
                       </button>
                     </div>
-                    <p className="text-xs text-muted-foreground mb-3">{job.company}</p>
-                    
+                    <p className="mb-3 text-xs font-medium text-muted-foreground">{job.company}</p>
                     {job.url && (
-                      <a href={job.url} target="_blank" rel="noreferrer" className="text-xs text-indigo-500 flex items-center gap-1 mb-3 hover:underline">
+                      <a href={job.url} target="_blank" rel="noreferrer" className="mb-3 flex items-center gap-1 text-xs font-bold text-indigo-500 hover:underline">
                         View Posting <ExternalLink size={10} />
                       </a>
                     )}
-
-                    <div className="flex items-center gap-1">
-                      <select
-                        value={job.column}
-                        onChange={(e) => moveJob(job.id, e.target.value as Column)}
-                        className="text-xs border rounded px-1 py-0.5 bg-background w-full"
-                      >
-                        {COLUMNS.map((c) => (
-                          <option key={c} value={c}>Move to {c}</option>
-                        ))}
-                      </select>
-                    </div>
+                    <select
+                      value={job.column}
+                      onChange={(e) => moveJob(job.id, e.target.value as Column)}
+                      className="h-8 w-full rounded-md border bg-muted/30 px-2 text-xs font-medium"
+                    >
+                      {COLUMNS.map((c) => (
+                        <option key={c} value={c}>Move to {c}</option>
+                      ))}
+                    </select>
                   </div>
                 ))}
                 {colJobs.length === 0 && (
-                  <div className="text-center p-6 border border-dashed rounded-lg text-muted-foreground text-sm">
-                    No jobs here
+                  <div className="flex min-h-32 items-center justify-center rounded-lg border border-dashed border-border/70 bg-muted/20 p-6 text-center text-xs font-medium text-muted-foreground">
+                    No roles in this lane
                   </div>
                 )}
               </div>
-            </div>
+            </PremiumPanel>
           );
         })}
       </div>
-    </div>
+    </PremiumPage>
   );
 };
 

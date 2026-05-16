@@ -22,6 +22,13 @@
       "when": 1778851889494,
       "tag": "0002_nappy_energizer",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1778920000000,
+      "tag": "0003_real_analytics",
+      "breakpoints": true
     }
   ]
 }

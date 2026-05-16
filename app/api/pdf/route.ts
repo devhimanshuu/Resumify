@@ -1,11 +1,29 @@
 import puppeteer from 'puppeteer';
 import { NextResponse } from 'next/server';
+import { getAuth } from "@clerk/nextjs/server";
+import { and, eq, or } from "drizzle-orm";
+import { db } from "@/db";
+import { documentTable } from "@/db/schema";
 
 export async function POST(request: Request) {
   try {
     const { documentId } = await request.json();
     if (!documentId) {
       return NextResponse.json({ error: "documentId is required" }, { status: 400 });
+    }
+
+    const { userId } = getAuth(request as any);
+    const documentData = await db.query.documentTable.findFirst({
+      where: userId
+        ? or(
+            and(eq(documentTable.documentId, documentId), eq(documentTable.userId, userId)),
+            and(eq(documentTable.documentId, documentId), eq(documentTable.status, "public"))
+          )
+        : and(eq(documentTable.documentId, documentId), eq(documentTable.status, "public")),
+    });
+
+    if (!documentData) {
+      return NextResponse.json({ error: "Document not found" }, { status: 404 });
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
@@ -39,7 +57,7 @@ export async function POST(request: Request) {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename="resume.pdf"',
+        'Content-Disposition': `attachment; filename="${documentData.title || "resume"}.pdf"`,
       },
     });
   } catch (error) {

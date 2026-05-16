@@ -51,6 +51,7 @@ import useGetDocuments from "@/features/document/use-get-document";
 import DeleteApplicationDialog from "./_components/DeleteApplicationDialog";
 import InterviewPrepAssistant from "../../_components/common/InterviewPrepAssistant";
 import SkillGapAnalyzer from "../../_components/common/SkillGapAnalyzer";
+import { PremiumPage } from "@/components/ui/premium-page";
 
 
 
@@ -240,7 +241,8 @@ const JobTrackerPage = () => {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-5 py-8 space-y-8">
+    <PremiumPage>
+      <div className="space-y-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
@@ -257,12 +259,12 @@ const JobTrackerPage = () => {
 
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
           <DialogTrigger asChild>
-            <Button className="rounded-2xl h-12 px-6 gap-2 bg-indigo-600 hover:bg-indigo-700 shadow-xl shadow-indigo-500/20 font-bold transition-all">
+            <Button className="h-11 gap-2 rounded-md bg-foreground px-5 font-bold text-background shadow-sm transition-all hover:bg-foreground/90">
               <Plus size={20} />
               New Application
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] rounded-3xl">
+          <DialogContent className="sm:max-w-[425px] rounded-lg">
             <DialogHeader>
               <DialogTitle className="text-2xl font-black">
                 Add New Job
@@ -282,7 +284,7 @@ const JobTrackerPage = () => {
                 <Input
                   id="jobTitle"
                   placeholder="e.g. Senior Frontend Engineer"
-                  className="rounded-xl h-11"
+                  className="h-11 rounded-md"
                   value={newJob.jobTitle}
                   onChange={(e) =>
                     setNewJob({ ...newJob, jobTitle: e.target.value })
@@ -299,7 +301,7 @@ const JobTrackerPage = () => {
                 <Input
                   id="company"
                   placeholder="e.g. Google, Stripe"
-                  className="rounded-xl h-11"
+                  className="h-11 rounded-md"
                   value={newJob.company}
                   onChange={(e) =>
                     setNewJob({ ...newJob, company: e.target.value })
@@ -314,10 +316,10 @@ const JobTrackerPage = () => {
                   value={newJob.documentId}
                   onValueChange={(v) => setNewJob({ ...newJob, documentId: v })}
                 >
-                  <SelectTrigger className="rounded-xl h-11">
+                  <SelectTrigger className="h-11 rounded-md">
                     <SelectValue placeholder="Select resume version" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl">
+                  <SelectContent className="rounded-lg">
                     {resumes.map((resume: any) => (
                       <SelectItem
                         key={resume.documentId}
@@ -338,10 +340,10 @@ const JobTrackerPage = () => {
                   value={newJob.status}
                   onValueChange={(v) => setNewJob({ ...newJob, status: v })}
                 >
-                  <SelectTrigger className="rounded-xl h-11">
+                  <SelectTrigger className="h-11 rounded-md">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl">
+                  <SelectContent className="rounded-lg">
                     {STATUS_COLUMNS.map((col) => (
                       <SelectItem key={col.id} value={col.id}>
                         {col.label}
@@ -353,7 +355,7 @@ const JobTrackerPage = () => {
             </div>
             <DialogFooter>
               <Button
-                className="w-full h-12 rounded-2xl font-bold bg-indigo-600 hover:bg-indigo-700"
+                className="h-11 w-full rounded-md bg-foreground font-bold text-background hover:bg-foreground/90"
                 onClick={handleCreate}
                 disabled={isCreating}
               >
@@ -383,7 +385,7 @@ const JobTrackerPage = () => {
               </span>
             </div>
 
-            <div className="flex-1 rounded-3xl bg-muted/30 border border-border/40 p-3 space-y-3">
+            <div className="flex-1 space-y-3 rounded-lg border border-border/70 bg-muted/20 p-3">
               <AnimatePresence mode="popLayout">
                 {applications
                   .filter((app) => app.status === column.id)
@@ -395,7 +397,7 @@ const JobTrackerPage = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       whileHover={{ y: -2 }}
-                      className="bg-card border rounded-2xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer group relative"
+                      className="group relative cursor-pointer rounded-lg border bg-card p-4 shadow-sm transition-colors hover:border-indigo-500/40"
                       onClick={() => {
                         setSelectedApp(app);
                         setIsDetailModalOpen(true);
@@ -465,7 +467,7 @@ const JobTrackerPage = () => {
 
       {/* Detail Modal / Cover Letter Generator */}
       <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
-        <DialogContent className="sm:max-w-[700px] rounded-3xl p-0 overflow-hidden">
+        <DialogContent className="sm:max-w-[700px] overflow-hidden rounded-lg p-0">
           {selectedApp && (
             <div className="flex flex-col h-full max-h-[90vh]">
               <div className="p-8 border-b bg-muted/20">
@@ -491,7 +493,7 @@ const JobTrackerPage = () => {
                 </div>
 
                 <div className="flex gap-4">
-                  <div className="flex-1 p-3 rounded-2xl bg-background border flex items-center gap-3">
+                  <div className="flex flex-1 items-center gap-3 rounded-lg border bg-background p-3">
                     <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
                       <FileText size={20} />
                     </div>
@@ -537,7 +539,7 @@ const JobTrackerPage = () => {
                     Application Notes
                   </h3>
                   <textarea
-                    className="w-full h-32 p-4 rounded-2xl bg-muted/30 border-none focus:ring-2 ring-indigo-500/20 text-sm resize-none"
+                    className="h-32 w-full resize-none rounded-lg border bg-muted/30 p-4 text-sm focus:ring-2 ring-indigo-500/20"
                     placeholder="Interview questions, salary expectations, next steps..."
                     defaultValue={selectedApp.notes || ""}
                   />
@@ -555,7 +557,8 @@ const JobTrackerPage = () => {
         isDeleting={isDeleting}
         jobTitle={appToDelete?.jobTitle || ""}
       />
-    </div>
+      </div>
+    </PremiumPage>
   );
 };
 

@@ -1,5 +1,6 @@
 import SkeletonLoader from "@/components/skeleton-loader";
 import { INITIAL_THEME_COLOR } from "@/lib/helper";
+import { sanitizeResumeHtml } from "@/lib/sanitize-html";
 import { ResumeDataType } from "@/types/resume.type";
 import React, { FC } from "react";
 
@@ -60,7 +61,7 @@ const ExperiencePreview: FC<PropsType> = ({ resumeInfo, isLoading }) => {
               style={{ fontSize: "13px" }}
               className="exp-preview leading-[14.6px]"
               dangerouslySetInnerHTML={{
-                __html: experience?.workSummary || "",
+                __html: sanitizeResumeHtml(experience?.workSummary),
               }}
             />
           </div>
