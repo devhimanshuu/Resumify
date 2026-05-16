@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, Bot, Zap, TrendingUp, Compass, Flame, MessageSquare, Wand2, Target, DollarSign, BrainCircuit, ChevronDown, Eye, Clock, ShieldCheck, Terminal as TerminalIcon, Headphones } from "lucide-react";
+import { Sparkles, Bot, Zap, TrendingUp, Compass, Flame, MessageSquare, Wand2, Target, DollarSign, BrainCircuit, ChevronDown, Eye, Clock, ShieldCheck, Terminal as TerminalIcon, Headphones, BookOpen, Smartphone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   DropdownMenu,
@@ -23,6 +23,9 @@ import TimeTraveler from "../../app/(home)/_components/common/TimeTraveler";
 import LiarDetector from "../../app/(home)/_components/common/LiarDetector";
 import TerminalEditor from "../../app/(home)/_components/common/TerminalEditor";
 import PodcastResume from "../../app/(home)/_components/common/PodcastResume";
+import InterviewCheatSheet from "../../app/(home)/_components/common/InterviewCheatSheet";
+import DigitalWalletCard from "../../app/(home)/_components/common/DigitalWalletCard";
+
 
 
 interface MagicItemProps {
@@ -136,7 +139,16 @@ const MagicAI = () => {
                       bgColor="bg-blue-500/10"
                       trigger={<LiarDetector />}
                   />
+                  <MagicItem 
+                      icon={<BookOpen size={18} />} 
+                      title="Cheat Sheet" 
+                      description="Company-specific prep dossier"
+                      color="text-purple-400"
+                      bgColor="bg-purple-500/10"
+                      trigger={<InterviewCheatSheet />}
+                  />
               </div>
+
 
 
 
@@ -205,7 +217,16 @@ const MagicAI = () => {
                           </Button>
                       }
                   />
+                  <MagicItem 
+                      icon={<Smartphone size={18} />} 
+                      title="Digital Card" 
+                      description="Add resume to Mobile Wallet"
+                      color="text-indigo-400"
+                      bgColor="bg-indigo-500/10"
+                      trigger={<DigitalWalletCard />}
+                  />
               </div>
+
 
 
           </div>

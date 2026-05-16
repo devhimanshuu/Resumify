@@ -4,6 +4,10 @@ import TopSection from "./common/TopSection";
 import ResumeForm from "./ResumeForm";
 import ResumePreview from "./ResumePreview";
 import { cn } from "@/lib/utils";
+import ResumeDoctor from "./common/ResumeDoctor";
+import { useResumeContext } from "@/context/resume-info-provider";
+import { useEffect } from "react";
+
 
 const EditResume = () => {
   const [activeTab, setActiveTab] = React.useState<"form" | "preview">("form");
@@ -79,7 +83,11 @@ const EditResume = () => {
           </div>
         </div>
       </div>
+
+      {/* AI Resume Doctor - Live Health Audit */}
+      <ResumeDoctor />
     </div>
+
   );
 };
 

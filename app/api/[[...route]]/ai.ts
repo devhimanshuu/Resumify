@@ -114,8 +114,23 @@ const aiRoute = new Hono()
     } catch (error: any) {
       return c.json({ error: error.message }, 500);
     }
+  })
+  .post("/generate-cheat-sheet", getAuthUser, async (c) => {
+    try {
+      const { resumeData, companyName } = await c.req.json();
+      const prompt = `
+        You are an elite interview coach. Generate a high-impact "Interview Cheat Sheet" for a candidate applying to ${companyName}.
+        (Prompt logic...)
+      `;
+      const response = await nvidiaClient.chat.completions.create({
+        model: "moonshotai/kimi-k2.6",
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" }
+      });
+      return c.json(JSON.parse(response.choices[0].message.content || "{}"));
+    } catch (error: any) {
+      return c.json({ error: error.message }, 500);
+    }
   });
-
-
 
 export default aiRoute;
